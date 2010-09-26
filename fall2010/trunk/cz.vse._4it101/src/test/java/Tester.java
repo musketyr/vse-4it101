@@ -32,5 +32,8 @@ public final class Tester
         }
     }
     
+    public static void main(String[] args) {
+        otestuj("Assignment1");
+    }
     
 }

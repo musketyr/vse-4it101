@@ -3,6 +3,7 @@
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.util.Arrays;
 
 import javax.swing.JDialog;
 import javax.swing.JTextArea;
@@ -11,7 +12,7 @@ import eu.ebdit.eau.Porter;
 import eu.ebdit.eau.Report;
 import eu.ebdit.eau.Reporter;
 import eu.ebdit.eau.junit.JUnitResultCollector;
-import eu.ebdit.eau.util.ScoreAnnotationCollector;
+import eu.ebdit.eau.util.XmlScoreParser;
 
 public class AssignmentTester {
 
@@ -56,9 +57,9 @@ public class AssignmentTester {
         Porter.leasePorter("bluej").giveBurden("testedClass", tested.getName());
         Reporter reporter = Reporter
             .withResultCollectors(new JUnitResultCollector())
-            .withScoreCollectors(new ScoreAnnotationCollector())
+            .withScoreCollectors(new XmlScoreParser())
             .build();
-        Report report = reporter.report(assignment,tested.getName());
+        Report report = reporter.report(Arrays.asList(assignment, "/+libs/ukol01.score.xml"),tested.getName());
         return report;
     }
 

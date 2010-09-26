@@ -47,31 +47,19 @@ public class Assignment1 extends TestCase implements IO.ITester{
 
 
     @Points(0.25)
-    @Description("Test je správně pojmenován")
-    @Details("Konvence naleznete na http://vyuka.pecinovsky.cz/vse/101/index.html#Ukoly.")
+    @Description("Třída je správně pojmenována")
     public void testName() throws Exception {
         assertTrue(XNAME_VSE_PTRN.matcher(getTestedClass().getName()).matches());
     }
     
-    @Points(1)
-    @Description("Test má alespoň dvě testovací metody")
-    @Details("Testovací metody snadno vytvoříte pomocí kontextového menu.")
-    public void testTestMethodsCount() throws Exception {
-        HasTests fixtures = Duck.type(getTest(), HasTests.class);
-        assertTrue(2 <= fixtures.allTests().length);
-    }
-
     @Points(0.25)
-    @Description("Testovací třída má veřejný konstruktor s jedním textovým parametrem")
-    @Details("BlueJ vytváří tento konstruktor sám. Stačí, když jej nebudte sami upravovat.")
+    @Description("Testovací třída je vytvořena podle správné šablony")
     public void testStringConstructor() throws Exception {
         assertTrue(Duck.test(getTestedClass(), HasStringContructor.class));
     }
 
     @Points(0.25)
-    @Description("Testovací přípravky jsou vytvořeny v metodě setUp()")
-    @Details("Testovací přípravy jsou vytvářeny aplikací BlueJ samy při použití menu " +
-    		"\"Dosavadní činnost -> Testovací přípravky\".")
+    @Description("Je vytvořen testovací přípravek" )
     public void testInitBySetUp() throws Exception {
         Object test = getTest();
         HasFixtures fixtures = Duck.type(test, HasFixtures.class);
@@ -85,19 +73,33 @@ public class Assignment1 extends TestCase implements IO.ITester{
     }
 
     @Points(1)
-    @Description("Test má alespoň pět testovacích přípravků, které jsou tvary.")
-    @Details("Testovací přípravky vytváříme pomocí kontextového menu " +
-    		"\"Dosavadní činnost -> Testovací přípravky\"")
+    @Description("Přípravek je tvořen nejméně pěti grafickými objekty")
     public void testFixturesAreShapes() throws Exception {
         Object test = getTest();
         HasShapeFixtures fixtures = Duck.type(test, HasShapeFixtures.class);
         assertTrue(fixtures.allFixture().length >= 5);
     }
 
+    @Points(0.25)
+    @Description("Vytvoření přípravku je ukončeno zobrazením dialogového okna s oznámením o jeho připravenosti")
+    public void testTestsUsesMessage() throws Exception {
+        Object test = getTest();
+        BasicTestCase testCase = Duck.type(test, BasicTestCase.class);
+        int counts = messageCount;
+        testCase.setUp();
+        assertTrue(counts < messageCount);
+        testCase.tearDown();
+    }
+
     @Points(1)
-    @Description("Testovací metody hýbou alespoň jedním tvarem")
-    @Details("Aby se tvary hýbaly, zavolejte pomocí kontextového menu objektu" +
-    		" některou z metod pro pohyb, např. posunNahorů.")
+    @Description("Třída má definovány alespoň dvě testovací metody (animace)")
+    public void testTestMethodsCount() throws Exception {
+        HasTests fixtures = Duck.type(getTest(), HasTests.class);
+        assertTrue(2 <= fixtures.allTests().length);
+    }
+
+    @Points(1)
+    @Description("Testovací metody (animace) změní pozici a/nebo velikost nejméně jednoho tvaru")
     public void testTestMethodsMoves() throws Exception {
         final Object test = getTest();
         final HasTests tests = Duck.type(test, HasTests.class);
@@ -126,23 +128,6 @@ public class Assignment1 extends TestCase implements IO.ITester{
             IO.zpravodaj.odhlaš(tester);
         }
     }
-
-    @Points(0.25)
-    @Description("Před během testovací metody se musí zobrazit zpráva.")
-    @Details("Zavolejte metodu IO.zpráva(\"<váš text>\") dříve než začnete animovat.")
-    public void testTestsUsesMessage() throws Exception {
-        Object test = getTest();
-        HasTests tests = Duck.type(test, HasTests.class);
-        BasicTestCase testCase = Duck.type(test, BasicTestCase.class);
-        for (TestMethod method : tests.allTests()) {
-            testCase.setUp();
-            int counts = messageCount;
-            method.testIt();
-            assertTrue(counts < messageCount);
-            testCase.tearDown();// nedela nic v bluej
-        }
-    }
-    
 
     private boolean checkMoved(List<Shape> original, List<Shape> afterRun) {
         boolean moved = false;
