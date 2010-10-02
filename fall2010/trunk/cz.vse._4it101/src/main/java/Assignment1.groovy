@@ -23,7 +23,6 @@ import cz.vse._4it101.SomeFixture;
 import cz.vse._4it101.TestMethod;
 import eu.ebdit.eau.Assignment;
 import eu.ebdit.eau.Description;
-import eu.ebdit.eau.Details;
 import eu.ebdit.eau.Points;
 import eu.ebdit.eau.Porter;
 
@@ -46,19 +45,19 @@ public class Assignment1 extends TestCase implements IO.ITester{
     private int messageCount = 0;
 
 
-    @Points(0.25)
+    @Points(0.25d)
     @Description("Třída je správně pojmenována")
     public void testName() throws Exception {
         assertTrue(XNAME_VSE_PTRN.matcher(getTestedClass().getName()).matches());
     }
     
-    @Points(0.25)
+    @Points(0.25d)
     @Description("Testovací třída je vytvořena podle správné šablony")
     public void testStringConstructor() throws Exception {
         assertTrue(Duck.test(getTestedClass(), HasStringContructor.class));
     }
 
-    @Points(0.25)
+    @Points(0.25d)
     @Description("Je vytvořen testovací přípravek" )
     public void testInitBySetUp() throws Exception {
         Object test = getTest();
@@ -72,7 +71,7 @@ public class Assignment1 extends TestCase implements IO.ITester{
         }
     }
 
-    @Points(1)
+    @Points(1d)
     @Description("Přípravek je tvořen nejméně pěti grafickými objekty")
     public void testFixturesAreShapes() throws Exception {
         Object test = getTest();
@@ -80,7 +79,7 @@ public class Assignment1 extends TestCase implements IO.ITester{
         assertTrue(fixtures.allFixture().length >= 5);
     }
 
-    @Points(0.25)
+    @Points(0.25d)
     @Description("Vytvoření přípravku je ukončeno zobrazením dialogového okna s oznámením o jeho připravenosti")
     public void testTestsUsesMessage() throws Exception {
         Object test = getTest();
@@ -91,14 +90,14 @@ public class Assignment1 extends TestCase implements IO.ITester{
         testCase.tearDown();
     }
 
-    @Points(1)
+    @Points(1d)
     @Description("Třída má definovány alespoň dvě testovací metody (animace)")
     public void testTestMethodsCount() throws Exception {
         HasTests fixtures = Duck.type(getTest(), HasTests.class);
         assertTrue(2 <= fixtures.allTests().length);
     }
 
-    @Points(1)
+    @Points(1d)
     @Description("Testovací metody (animace) změní pozici a/nebo velikost nejméně jednoho tvaru")
     public void testTestMethodsMoves() throws Exception {
         final Object test = getTest();

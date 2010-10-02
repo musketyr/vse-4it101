@@ -11,8 +11,6 @@ import javax.swing.JTextArea;
 import eu.ebdit.eau.Porter;
 import eu.ebdit.eau.Report;
 import eu.ebdit.eau.Reporter;
-import eu.ebdit.eau.junit.JUnitResultCollector;
-import eu.ebdit.eau.util.XmlScoreParser;
 
 public class AssignmentTester {
 
@@ -46,11 +44,11 @@ public class AssignmentTester {
 
     private void center(JDialog dialog) {
         Dimension dim = dialog.getToolkit().getScreenSize();
-        dialog.setSize((int) Math.round(dim.getWidth() / 3 * 2),
-                (int) Math.round(dim.getHeight() / 3 * 2));
+        dialog.setSize((int) (Math.round(dim.getWidth() / 3 * 2)),
+                (int) (Math.round(dim.getHeight() / 3 * 2)));
         Rectangle abounds = dialog.getBounds();
-        dialog.setLocation((dim.width - abounds.width) / 2,
-                (dim.height - abounds.height) / 2);
+        dialog.setLocation((int)Math.round((dim.width - abounds.width) / 2),
+                (int)Math.round((dim.height - abounds.height) / 2));
     }
 
     private Report getReport() {

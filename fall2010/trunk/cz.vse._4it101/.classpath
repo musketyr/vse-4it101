@@ -1,25 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry kind="src" path="src/test/java"/>
-	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/junit.jar"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/commons-cli-1.0.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/commons-lang-1.0.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/commons-logging-1.0.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/dom4j-1.6.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/duckapter-0.7.1-RC1.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/eau-0.0.3-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/google-collections-1.0.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/groovy-all-1.7.4.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/gson-1.4.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/javassist-3.8.0.GA.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/logback-classic-0.9.9.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/logback-core-0.9.9.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/reflections-0.9.5-RC2.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/slf4j-api-1.5.8.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/BlueJ/lib/userlib/xml-apis-1.0.b2.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
