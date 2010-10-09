@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<score>
+	<suite name="Assignment3">
+	    <check 
+	        points="0.2"
+	        name="testName" 
+	        message="Třída je správně pojmenována" />
+	    <check 
+	        points="0.2"
+	        name="testStringConstructor" 
+	        message="Testovací třída je vytvořena podle správné šablony" />
+        <check 
+            points="0.2"
+            name="testInitBySetUp" 
+            message="Testovací přípravek inicializuje všechny objekty" />
+	    <check 
+	        points="0.2"
+	        name="testFixturesAreShapes" 
+	        message="Přípravek je tvořen nejméně pěti grafickými objekty" />
+        <check 
+            points="0.2"
+            name="testSetUpUsesMessage" 
+            message="Vytvoření přípravku musí končit zobrazením zprávy" />            	        
+        <check 
+            points="0.5"
+            name="testTestMethodsCount" 
+            message="Test má alespoň 4 testovací metody" />
+        <check 
+            points="0.5"
+            name="testTestSmoothMethodsCount" 
+            message="Test má alespoň dvě testovací metody, které hýbou plynule." />
+        <check 
+            points="0.5"
+            name="testAllMethodsMoves" 
+            message="Každá testovací metoda hýbe alespoň jedním tvarem." />                  
+        <check 
+            points="0.75"
+            name="testSmoothMoves" 
+            message="Plynulé testovací metody doopravdy hýbou plynule." />
+        <check 
+            points="0.75"
+            name="testSameEnd" 
+            message="Plynulé testovací metody zanechají plátno ve stejném stavu jako metody neplynulé." />                                     
+	</suite>
+</score>
