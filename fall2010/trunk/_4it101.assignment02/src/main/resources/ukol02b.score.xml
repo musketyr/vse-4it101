@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<score>
+	<suite name="Assignment2b">
+	    <check 
+	        points="0.2"
+	        name="testName" 
+	        message="Třída je správně pojmenována" />
+	    <check 
+	        points="0.2"
+	        name="testStringConstructor" 
+	        message="Testovací třída je vytvořena podle správné šablony" />
+	    <check 
+	        points="0.2"
+	        name="testInitBySetUp" 
+	        message="Je vytvořen testovací přípravek" />
+	    <check 
+	        points="0.2"
+	        name="testFixturesAreShapes" 
+	        message="Přípravek je tvořen nejméně pěti grafickými objekty" />
+        <check 
+            points="0.2"
+            name="testSetUpUsesMessage" 
+            message="Vytvoření přípravku musí končit zobrazením zprávy." />            	        
+
+        <check 
+            points="0.3"
+            name="testHasMovement1" 
+            message="Test má metodu 'testPosuny()'" />
+        <check 
+            points="0.3"
+            name="testHasMovement2" 
+            message="Test má metodu 'testPosuny2()'" />
+        <check 
+            points="0.3"
+            name="testHasSmoothMovement1" 
+            message="Test má metodu 'testPlynuléPosuny()'" />                  
+        <check 
+            points="0.3"
+            name="testHasSmoothMovement2" 
+            message="Test má metodu 'testPlynuléPosuny2()'" />
+        <check 
+            points="0.3"
+            name="testMovement1Moves" 
+            message="Metoda 'testPosuny()' správně animuje" />        
+        <check 
+            points="0.3"
+            name="testMovement2Moves" 
+            message="Metoda 'testPosuny2()' správně animuje" />
+        <check 
+            points="0.3"
+            name="testSmoothMovement1Moves" 
+            message="Metoda 'testPlynuléPosuny()' správně animuje" />
+        <check 
+            points="0.3"
+            name="testSmoothMovement2Moves" 
+            message="Metoda 'testPlynuléPosuny2()' správně animuje" />
+        <check 
+            points="0.3"
+            name="testSmoothEndsSameWay1" 
+            message="Metoda 'testPlynuléPosuny()' zanechá plátno ve stejném stavu jako metoda 'testPosuny()'" />    
+        <check 
+            points="0.3"
+            name="testSmoothEndsSameWay2" 
+            message="Metoda 'testPlynuléPosuny2()' zanechá plátno ve stejném stavu jako metoda 'testPosuny2()'" />                                 
+	</suite>
+</score>

@@ -11,6 +11,25 @@ public interface Shape {
 	
 	public static class Helper {
 		
+	    public static boolean equals(Shape[] s1, Shape[] s2){
+	        if (s1 == null) {
+                return s2 == null;
+            }
+	        if (s2 == null) {
+                return false;
+            }
+	        if (s1.length != s2.length) {
+                return false;
+            }
+	        for (int i = 0; i < s1.length; i++) {
+                if(!equals(s1[i], s2[i])){
+                    return false;
+                }
+            }
+	        
+	        return true;
+	    }
+	    
 		public static boolean equals(Shape s1, Shape s2){
 			if (s1 == null) {
 				return s2 == null;
