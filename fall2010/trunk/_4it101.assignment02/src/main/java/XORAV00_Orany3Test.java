@@ -96,12 +96,12 @@ public class XORAV00_Orany3Test extends junit.framework.TestCase {
         eli.setPozice(100, 100);
     }
 
-    public void testPlynuléPosuny() {
+    public void testPosunyPlynule() {
         Přesouvač p = new Přesouvač(1);
         p.přesunNa(100, 100, eli);
     }
 
-    public void testPlynuléPosuny2() {
+    public void testPosuny2Plynule() {
         Přesouvač p = new Přesouvač(1);
         p.přesunNa(100, 100, eli);
     }
