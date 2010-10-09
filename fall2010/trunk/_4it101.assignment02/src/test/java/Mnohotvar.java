@@ -1,5 +1,4 @@
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,12 +15,16 @@ import java.util.Map;
  * pozici a rozměru tak, aby pozice byla neustále v levém rohu opsaného
  * obdélníku a rozměr mnohotvaru odpovídal rozměru tohoto obdélníku.
  *
- * @author Rudolf PECINOVSKÝ
- * @version 6.00 - 2010-07-10
+ * @author    Rudolf PECINOVSKÝ
+ * @version   0.00.000,  0.0.2003
  */
-public class Mnohotvar implements ITvar
+public class Mnohotvar
+       implements ITvar, IPosuvný, INafukovací, IHýbací
 {
 //== KONSTANTNÍ ATRIBUTY TŘÍDY =================================================
+
+    /** Maximální povolená velikost kroku. */
+    public static final int MAX_KROK = 100;
 
     /** Kolekce všech vytvořených a dosud nezrušených mnohotvarů
      *  indexovaná jejich názvy. */
@@ -30,13 +33,18 @@ public class Mnohotvar implements ITvar
 
 
 
-
 //== PROMĚNNÉ ATRIBUTY TŘÍDY ===================================================
+
+    /** Počet pixelů, o něž se instance posune
+     *  po bezparametrickém posunovém povelu */
+    private static int krok = 50;
+
+
+
 //== STATICKÝ INICIALIZAČNÍ BLOK - STATICKÝ KONSTRUKTOR ========================
 //== KONSTANTNÍ ATRIBUTY INSTANCÍ ==============================================
 
-    /** Název zadaný při konstrukci objektu.
-     *  Tento název umožnuje blíže specifikovat příslušný mnohotvar. */
+    /** Název sestávající z názvu třídy a pořadí instance */
     private final String název;
 
     /** Seznam prvků, z nichž se mnohotvar skládá. */
@@ -50,27 +58,51 @@ public class Mnohotvar implements ITvar
      *  přidávat další součásti. */
     private boolean tvorbaUkončena = false;
 
-    /** Bodová x-ová souřadnice instance. */
-    private int xPos;
-
-    /** Bodová y-ová souřadnice instance. */
-    private int yPos;
-
-    /** Šířka v bodech. */
-    protected int šířka;
-
-    /** Výška v bodech. */
-    protected int výška;
+    private int xPos;    //Bodová x-ová souřadnice počátku
+    private int yPos;    //Bodová y-ová souřadnice počátku
+    private int šířka;   //šířka v bodech
+    private int výška;   //Výška v bodech
 
 
 
 //== PŘÍSTUPOVÉ METODY VLASTNOSTÍ TŘÍDY ========================================
+
+    /***************************************************************************
+     * Vrátí velikost implicitního kroku, o který se instance přesune
+     * při volaní bezparametrickych metod přesunu.
+     *
+     * @return Velikost implicitního kroku v bodech
+     */
+     public static int getKrok()
+     {
+         return krok;
+     }
+
+
+    /***************************************************************************
+     * Nastaví velikost implicitního kroku, o který se instance přesune
+     * při volaní bezparametrickych metod přesunu.
+     *
+     * @param velikost  Velikost implicitního kroku v bodech;<br/>
+     *                  musí platit:  0 &lt;= velikost &lt;= {@link #MAX_KROK}
+     */
+    public static void setKrok( int velikost )
+    {
+        if( (velikost < 0)  || (velikost > MAX_KROK) ) {
+            throw new IllegalArgumentException(
+                "\nKrok musí byt z intervalu <0;" + MAX_KROK + ">." );
+        }
+        krok = velikost;
+    }
+
+
+
 //== OSTATNÍ NESOUKROMÉ METODY TŘÍDY ===========================================
 
     /***************************************************************************
-     * Vrátí pole názvů všech evidovaných mnohotvarů.
+     * Vrátí pole všech názvů všech evidovaných multitvarů.
      *
-     * @return Pole názvů evidovaných mnohotvarů
+     * @return Požadované pole
      */
     public static String[] názvyDostupných()
     {
@@ -179,19 +211,18 @@ public class Mnohotvar implements ITvar
 
 
     /***************************************************************************
-     * Vrátí kopii daného tvaru a přidělí jí vlastní název ve tvaru
+     * Vrátí kopii daného tvaru a přidělí jí vlastní název ve tvaru .
      * {@code PůvodníNázev#?}, kde otazník zastupuje nejmenší celé kladné číslo,
      * pro něž není evidován mnohotvar s takto vytvořeným názvem.
      *
      * @return Požadovaná kopie
      */
-    @Override
-    public Mnohotvar kopie()
+    public ITvar kopie()
     {
         String názevKopie = (název == null)
                           ? null
                           : názevProKopii(this.název);
-        Mnohotvar kopie = kopie(false, názevKopie);
+        ITvar  kopie = kopie(false, názevKopie);
         return kopie;
     }
 
@@ -203,7 +234,7 @@ public class Mnohotvar implements ITvar
      * @param  názevKopie Název požadované kopie
      * @return Požadovaná kopie
      */
-    public Mnohotvar kopie(String názevKopie)
+    public ITvar kopie(String názevKopie)
     {
         return kopie(false, názevKopie);
     }
@@ -216,7 +247,7 @@ public class Mnohotvar implements ITvar
      * @param  názevKopie Název požadované kopie
      * @return Požadovaná kopie
      */
-    private Mnohotvar kopie(final boolean interní, final String názevKopie)
+    private ITvar kopie(final boolean interní, final String názevKopie)
     {
         if (! interní) {
             ověřNázev(názevKopie);
@@ -226,7 +257,18 @@ public class Mnohotvar implements ITvar
         for (int i = 0;   i < počet;   i++) {
             ait[i] = seznam.get(i).tvar;
         }
-        return new Mnohotvar(interní, názevKopie, ait);
+        if (this instanceof ITvar) {
+            return (ITvar)(new Mnohotvar(interní, názevKopie, ait));
+        } else {
+            //Pomocná třída zabezpečující správnou funkci i v případě,
+            //kdy třída nebude implementovat rozhraní ITvar
+            class TM extends Mnohotvar implements ITvar {
+                TM(String názevKopie, ITvar[] ait) {
+                    super(interní, názevKopie, ait);
+                }
+            }
+            return new TM(názevKopie, ait);
+        }
     }
 
 
@@ -235,12 +277,10 @@ public class Mnohotvar implements ITvar
 //== PŘÍSTUPOVÉ METODY VLASTNOSTÍ INSTANCÍ =====================================
 
     /***************************************************************************
-     * Vrátí x-ovou (vodorovnou) souřadnici pozice instance.
+     * Vrátí x-ovou souřadnici pozice instance.
      *
-     * @return  Aktuální vodorovná (x-ová) souřadnice instance,
-     *          x=0 má levý okraj plátna, souřadnice roste doprava
+     * @return  x-ová souřadnice.
      */
-    @Override
     public int getX()
     {
         return xPos;
@@ -248,12 +288,10 @@ public class Mnohotvar implements ITvar
 
 
     /***************************************************************************
-     * Vrátí y-ovou (svislou) souřadnici pozice instance.
+     * Vrátí y-ovou souřadnici pozice instance.
      *
-     * @return  Aktuální svislá (y-ová) souřadnice instance,
-     *          y=0 má horní okraj plátna, souřadnice roste dolů
+     * @return  y-ová souřadnice.
      */
-    @Override
     public int getY()
     {
         return yPos;
@@ -264,35 +302,30 @@ public class Mnohotvar implements ITvar
      * Přemístí celý mnohotvar na zadanou pozici.
      * Všechny součásti instance se přemisťují jako celek
      *
-     * @param x  Nově nastavovaná vodorovná (x-ová) souřadnice instance,
-     *           x=0 má levý okraj plátna, souřadnice roste doprava
-     * @param y  Nově nastavovaná svislá (y-ová) souřadnice instance,
-     *           y=0 má horní okraj plátna, souřadnice roste dolů
+     * @param x  Nastavovaná vodorovná souřadnice
+     * @param y  Nastavovaná nastavovaná svislá souřadnice
      */
-    @Override
-    public void setPozice(int x, int y)
+    public void setPozice( int x, int y )
     {
         ověřDokončenost();
         int dx = x - getX();
         int dy = y - getY();
-        SprávcePlátna.getInstance().nekresli(); {
-            for( Část č : seznam )
-            {
-                ITvar tvar = č.tvar;
-                tvar.setPozice( dx + tvar.getX(), dy + tvar.getY() );
-            }
-            this.xPos = x;    //Nastavuji hodnoty pro celý tvar
-            this.yPos = y;
-        } SprávcePlátna.getInstance().vraťKresli();
+        for( Část č : seznam )
+        {
+            ITvar tvar = č.tvar;
+            tvar.setPozice( dx + tvar.getX(), dy + tvar.getY() );
+        }
+        this.xPos = x;    //Nastavuji hodnoty pro celý tvar
+        this.yPos = y;
+        nakresli();
     }
 
 
     /***************************************************************************
-     * Vrátí šířku instance v bodech.
+     * Vrátí šířku instance.
      *
-     * @return  Aktuální šířka instance v bodech
+     * @return  Šířka instance v bodech
      */
-    @Override
      public int getŠířka()
      {
          return šířka;
@@ -300,11 +333,10 @@ public class Mnohotvar implements ITvar
 
 
     /***************************************************************************
-     * Vrátí výšku instance v bodech.
+     * Vrátí výšku instance.
      *
-     * @return  Aktuální výška instance v bodech
+     * @return  Výška instance v bodech
      */
-    @Override
      public int getVýška()
      {
          return výška;
@@ -328,12 +360,11 @@ public class Mnohotvar implements ITvar
      * součástí tak, aby výsledný mnohotvar měl i při novém rozměru
      * stále stejný celkový vzhled.
      * Nastavované rozměry musí být nezáporné,
-     * místo nulového rozměru se nastaví rozměr rovný jedné.
+     * avšak místo nulového rozměru se nastaví rozměr rovný jedné.
      *
      * @param šířka    Nově nastavovaná šířka; šířka >= 0
      * @param výška    Nově nastavovaná výška; výška >= 0
      */
-    @Override
     public void setRozměr(int šířka, int výška)
     {
         ověřDokončenost();
@@ -341,24 +372,21 @@ public class Mnohotvar implements ITvar
             throw new IllegalArgumentException(
             "Rozměry musí byt nezáporné: šířka=" + šířka + ", výška=" + výška);
         }
-        SprávcePlátna.getInstance().nekresli(); {
-            //Uprav velikosti a pozice jednotlivých částí
-            for( Část č : seznam ) {
-                č.poNafouknutí(šířka, výška);
-            }
-            //Nastavuji hodnoty pro celý tvar
-//            this.šířka = šířka;
-//            this.výška = výška;
-            this.šířka = Math.max(1, šířka);
-            this.výška = Math.max(1, výška);
-        } SprávcePlátna.getInstance().vraťKresli();
+        //Uprav velikosti a pozice jednotlivých částí
+        for( Část č : seznam ) {
+            č.poNafouknutí(šířka, výška);
+        }
+        //Nastavuji hodnoty pro celý tvar
+        this.šířka = Math.max(1, šířka);
+        this.výška = Math.max(1, výška);
+        nakresli();
     }
 
 
     /***************************************************************************
-     * Vrátí název instance zadaný při konstrukci objektu.
+     * Vrátí název instance, tj. název její třídy následovaný pořadím.
      *
-     * @return  Řetězec s názvem instance
+     * @return  Řetězec s názvem instance.
      */
     public String getNázev()
     {
@@ -368,131 +396,6 @@ public class Mnohotvar implements ITvar
 
 
 //== OSTATNÍ NESOUKROMÉ METODY INSTANCÍ ========================================
-
-    /***************************************************************************
-     * Vrátí podpis instance, tj. její řetězcovou reprezentaci.
-     * Používá se především při ladění.
-     *
-     * @return Řetězcová reprezentace (podpis) dané instance
-     */
-    @Override
-    public String toString()
-    {
-        return název + "_(x=" + xPos + ",y=" + yPos  +
-               ",šířka=" + šířka + ",výška=" + výška + ")";
-    }
-
-
-    /***************************************************************************
-     * Prostřednictvím dodaného kreslítka vykreslí obraz své instance.
-     *
-     * @param kreslítko Kreslítko, které nakreslí instanci
-     */
-    @Override
-    public void nakresli( Kreslítko kreslítko )
-    {
-        SprávcePlátna.getInstance().nekresli(); {
-            for( Část č : seznam )
-            {
-                č.tvar.nakresli(kreslítko);
-            }
-        } SprávcePlátna.getInstance().vraťKresli();
-    }
-
-
-    /***************************************************************************
-     * Přihlásí se u správce plátna.
-     */
-    public void nakresli()
-    {
-        SprávcePlátna.getInstance().přidej(this);
-    }
-
-
-    /***************************************************************************
-     * Odhlásí se u správce plátna.
-     */
-    public void smaž()
-    {
-        SprávcePlátna.getInstance().odstraň(this);
-    }
-
-
-    /***************************************************************************
-     * Přesune instanci o zadaný počet bodů vpravo,
-     * při záporné hodnotě parametru vlevo.
-     *
-     * @param vzdálenost Vzdálenost, o kterou se instance přesune
-     */
-    public void posunVpravo(int vzdálenost)
-    {
-        setPozice( xPos+vzdálenost, yPos );
-    }
-
-
-    /***************************************************************************
-     * Přesune instanci o implicitní počet bodů vpravo.
-     * Tento počet definuje správce plátna a je možno jej zjistit
-     * zavoláním jeho metody {@link getKrok()}
-     * a nastavit zavoláním jeho metody {@link setKrok(int)},
-     * resp. {@link setKrokRozměr(int,int,int)}.
-     */
-    public void posunVpravo()
-    {
-        posunVpravo( SprávcePlátna.getInstance().getKrok() );
-    }
-
-
-    /***************************************************************************
-     * Přesune instanci o implicitní počet bodů vlevo.
-     * Tento počet definuje správce plátna a je možno jej zjistit
-     * zavoláním jeho metody {@link getKrok()}
-     * a nastavit zavoláním jeho metody {@link setKrok(int)},
-     * resp. {@link setKrokRozměr(int,int,int)}.
-     */
-    public void posunVlevo()
-    {
-        posunVpravo( -SprávcePlátna.getInstance().getKrok() );
-    }
-
-
-    /***************************************************************************
-     * Přesune instanci o zadaný počet bodů dolů,
-     * při záporné hodnotě parametru nahoru.
-     *
-     * @param vzdálenost   Počet bodů, o které se instance přesune
-     */
-    public void posunDolů(int vzdálenost)
-    {
-        setPozice( xPos, yPos+vzdálenost );
-    }
-
-
-    /***************************************************************************
-     * Přesune instanci o implicitní počet bodů dolů.
-     * Tento počet definuje správce plátna a je možno jej zjistit
-     * zavoláním jeho metody {@link getKrok()}
-     * a nastavit zavoláním jeho metody {@link setKrok(int)},
-     * resp. {@link setKrokRozměr(int,int,int)}.
-     */
-    public void posunDolů()
-    {
-        posunDolů( SprávcePlátna.getInstance().getKrok() );
-    }
-
-
-    /***************************************************************************
-     * Přesune instanci o implicitní počet bodů nahoru.
-     * Tento počet definuje správce plátna a je možno jej zjistit
-     * zavoláním jeho metody {@link getKrok()}
-     * a nastavit zavoláním jeho metody {@link setKrok(int)},
-     * resp. {@link setKrokRozměr(int,int,int)}.
-     */
-    public void posunVzhůru()
-    {
-        posunDolů( -SprávcePlátna.getInstance().getKrok() );
-    }
-
 
     /***************************************************************************
      * Ukončí tvrobu mnohotvaru; od této chvíle již nebude možno přidat
@@ -522,7 +425,43 @@ public class Mnohotvar implements ITvar
               :  t.kopie();
             přidejTvar(t);
         }
-        SprávcePlátna.getInstance().překresli();
+    }
+
+
+    /***************************************************************************
+     * Převede instanci na řetězec. Používá se především při ladění.
+     *
+     * @return Řetězcová reprezentace dané instance.
+     */
+    @Override
+    public String toString()
+    {
+        return název + "_(x=" + xPos + ",y=" + yPos  +
+               ",šířka=" + šířka + ",výška=" + výška + ")";
+    }
+
+
+    /***************************************************************************
+     * Nakreslí mnohotvar na plátno.
+     */
+    public void nakresli()
+    {
+        for( Část č : seznam )
+        {
+            č.tvar.nakresli();
+        }
+    }
+
+
+    /***************************************************************************
+     * Smaže obraz své instance z plátna (nakreslí ji barvou pozadí plátna).
+     */
+    public void smaž()
+    {
+        for( Část č : seznam )
+        {
+            č.tvar.smaž();
+        }
     }
 
 
@@ -593,7 +532,7 @@ public class Mnohotvar implements ITvar
      * Přidá do mnohotvaru zadaný prvek a příslušně upraví novou
      * pozici a velikost mnohotvaru.
      *
-     * @param tvar  Přidávaný tvar
+     * @param tvar  Přidávaný hýbací tvar
      */
     private void přidejTvar(ITvar tvar)
     {
@@ -663,7 +602,7 @@ public class Mnohotvar implements ITvar
      */
     private void setNovýNázev(String název)
     {
-        Class<?> cls = Mnohotvar.class;
+        Class cls = Mnohotvar.class;
         try {
             java.lang.reflect.Field fldNázev = cls.getDeclaredField("název");
             fldNázev.setAccessible(true);
@@ -680,6 +619,9 @@ public class Mnohotvar implements ITvar
     /***************************************************************************
      * Třída slouží jako přepravka pro uchovávání pomocných informací
      * pro co nelepší změnu velikosti mnohotvaru.
+     *
+     * @author    Rudolf Pecinovský
+     * @version   0.00.000,  0.0.2003
      */
     private final class Část
     {
@@ -714,7 +656,7 @@ public class Mnohotvar implements ITvar
 
         /***********************************************************************
          * Vytvoří přepravku a zapamatuje si aktuální stav některých poměrů
-         * vůči současné porobě mnohotvaru.
+         * vůči současné porobě multitvaru.
          */
         Část(ITvar tvar)
         {
@@ -794,26 +736,5 @@ public class Mnohotvar implements ITvar
 
 
 
-//== TESTOVACÍ METODY A TŘÍDY ==================================================
-
-    /***************************************************************************
-     * Interní třída určená k tomu, aby testovací metoda mohla spustit
-     * posloupnost testů nad jedním přípravkem.
-     * Její jedinou metodou je tedy metoda pro smazání všech mnohotvarů.
-     * Třída by správně neměla být veřejná.
-     * Umístování testů do stejného balíčku v testovacím stromu balíčků
-     * je však probíráno až v pokračovacím kurzu, tak je vše definováno tak,
-     * aby mohla být testovací metoda i v jiném balíčku.
-     */
-    public static class Test
-    {
-        /***********************************************************************
-         * Odregistruje všechny zaregistrované mnohotvary a začíná vše znovu.
-         */
-        public static void odregistrujVše()
-        {
-            název2mnohotvar.clear();
-        }
-    }
-
+//== TESTY A METODA MAIN =======================================================
 }

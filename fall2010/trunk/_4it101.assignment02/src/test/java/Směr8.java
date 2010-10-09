@@ -7,8 +7,8 @@ import java.util.Map;
  * Třída {@code Směr8} slouží jako výčtový typ pro 8 hlavních a vedlejších
  * světových stran spolu se směrem ŽÁDNÝ.
  *
- * @author Rudolf PECINOVSKÝ
- * @version 6.00 - 2010-07-10
+ * @author   Rudolf PECINOVSKÝ
+ * @version  3.00.002
  */
 public enum Směr8
 {

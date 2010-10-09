@@ -1,14 +1,16 @@
 
 
-
 /*******************************************************************************
  * Instance třídy {@code Elipsa} představují elipsy určené
  * pro práci na virtuálním plátně při prvním seznámení s třídami a objekty.
  *
- * @author Rudolf PECINOVSKÝ
- * @version 6.00 - 2010-07-10
+ * Výchozí podoba třídy určená pro první seznámení s třídami a objekty.
+ *
+ * @author   Rudolf PECINOVSKÝ
+ * @version  3.00.002
  */
-public class Elipsa implements ITvar
+public class Elipsa
+       implements ITvar, IPosuvný, IHýbací, INafukovací
 {
 //== KONSTANTNÍ ATRIBUTY TŘÍDY =================================================
 
@@ -17,9 +19,19 @@ public class Elipsa implements ITvar
      *  pro elipsu Barva.MODRÁ. */
     public static final Barva IMPLICITNÍ_BARVA = Barva.MODRÁ;
 
+    /** Maximální povolená velikost kroku. */
+    public static final int MAX_KROK = 100;
+
+    /** Plátno, na které se bude instance kreslit. */
+    private static final Plátno PLÁTNO = Plátno.getPlátno();
+
 
 
 //== PROMĚNNÉ ATRIBUTY TŘÍDY ===================================================
+
+    /** Počet pixelů, o něž se instance posune
+     *  po bezparametrickém posunovém povelu */
+    private static int krok = 50;
 
     /** Počet vytvořených instancí */
     private static int počet = 0;
@@ -39,49 +51,69 @@ public class Elipsa implements ITvar
 
 //== PROMĚNNÉ ATRIBUTY INSTANCÍ ================================================
 
-    /** Bodová x-ová souřadnice instance. */
-    private int xPos;
-
-    /** Bodová y-ová souřadnice instance. */
-    private int yPos;
-
-    /** Šířka v bodech. */
-    protected int šířka;
-
-    /** Výška v bodech. */
-    protected int výška;
-
-    /** Barva instance. */
-    private Barva barva;
+    private int    xPos;    //Bodová x-ová souřadnice počátku
+    private int    yPos;    //Bodová y-ová souřadnice počátku
+    private int    šířka;   //šířka v bodech
+    private int    výška;   //Výška v bodech
+    private Barva  barva;   //Barva instance
 
 
 
 //== PŘÍSTUPOVÉ METODY VLASTNOSTÍ TŘÍDY ========================================
+
+    /***************************************************************************
+     * Vrátí velikost implicitního kroku, o který se instance přesune
+     * při volaní bezparametrickych metod přesunu.
+     *
+     * @return Velikost implicitního kroku v bodech
+     */
+     public static int getKrok()
+     {
+         return krok;
+     }
+
+
+    /***************************************************************************
+     * Nastaví velikost implicitního kroku, o který se instance přesune
+     * při volaní bezparametrickych metod přesunu.
+     *
+     * @param velikost  Velikost implicitního kroku v bodech;<br/>
+     *                  musí platit:  0 &lt;= velikost &lt;= {@link #MAX_KROK}
+     */
+    public static void setKrok( int velikost )
+    {
+        if( (velikost < 0)  || (velikost > MAX_KROK) ) {
+            throw new IllegalArgumentException(
+                "Krok musí byt z intervalu <0;" + MAX_KROK + ">." );
+        }
+        krok = velikost;
+    }
+
+
+
 //== OSTATNÍ NESOUKROMÉ METODY TŘÍDY ===========================================
 
 //##############################################################################
 //== KONSTRUKTORY A TOVÁRNÍ METODY =============================================
 
     /***************************************************************************
-     * Připraví novou instanci s implicitním umístěním, rozměry a barvou.
+     * Připraví novou instanci s implicitními rozměry, umístěním a barvou.
      * Instance bude umístěna v levém horním rohu plátna
      * a bude mít implicitní barvu,
-     * výšku rovnu kroku a šířku dvojnásobku kroku plátna.
+     * výšku rovnu kroku a šířku dvojnásobku kroku (tj. implicitně 50x100 bodů).
      */
     public Elipsa()
     {
-        this( 0, 0, 2*SprávcePlátna.getInstance().getKrok(), SprávcePlátna.getInstance().getKrok() );
+        this( 0, 0, 2*krok, krok );
     }
 
 
     /***************************************************************************
-     * Připraví novou instanci se zadanou pozicí a rozměry
+     * Připraví novou instanci se zadanou polohou a rozměry
      * a implicitní barvou.
      *
-     * @param x       Vodorovná (x-ová) souřadnice instance,
-     *                x=0 má levý okraj plátna, souřadnice roste doprava
-     * @param y       Svislá (y-ová) souřadnice instance,
-     *                y=0 má horní okraj plátna, souřadnice roste dolů
+     * @param x       x-ová souřadnice instance, x>=0, x=0 má levý okraj plátna
+     * @param y       y-ová souřadnice instance, y>=0, y=0 má horní okraj plátna
      * @param šířka   Šířka vytvářené instance,  šířka > 0
      * @param výška   Výška vytvářené instance,  výška > 0
      */
@@ -92,12 +124,10 @@ public class Elipsa implements ITvar
 
 
     /***************************************************************************
-     * Připraví novou instanci se zadanou pozicí, rozměry a barvou.
+     * Připraví novou instanci se zadanými rozměry, polohou a barvou.
      *
-     * @param x       Vodorovná (x-ová) souřadnice instance,
-     *                x=0 má levý okraj plátna, souřadnice roste doprava
-     * @param y       Svislá (y-ová) souřadnice instance,
-     *                y=0 má horní okraj plátna, souřadnice roste dolů
+     * @param x       x-ová souřadnice instance, x>=0, x=0 má levý okraj plátna
+     * @param y       y-ová souřadnice instance, y>=0, y=0 má horní okraj plátna
      * @param šířka   Šířka vytvářené instance,  šířka > 0
      * @param výška   Výška vytvářené instance,  výška > 0
      * @param barva   Barva vytvářené instance
@@ -105,9 +135,9 @@ public class Elipsa implements ITvar
     public Elipsa( int x, int y, int šířka, int výška, Barva barva )
     {
         //Test platnosti parametru
-        if ((šířka<=0) || (výška<=0)) {
+        if( (x<0) || (y<0) || (šířka<=0) || (výška<=0) ) {
             throw new IllegalArgumentException(
-                "\nnew Elipsa - Parametry nemají povolené hodnoty: x="
+                "\nParametry nemají povolené hodnoty: x="
                 + x + ", y=" + y + ", šířka=" + šířka + ", výška=" + výška );
         }
 
@@ -117,6 +147,7 @@ public class Elipsa implements ITvar
         this.šířka = šířka;
         this.výška = výška;
         this.barva = barva;
+        nakresli();
     }
 
 
@@ -126,10 +157,20 @@ public class Elipsa implements ITvar
      *
      * @return Požadovaná kopie
      */
-    @Override
-    public Elipsa kopie()
+    public ITvar kopie()
     {
-        return new Elipsa(xPos, yPos, šířka, výška, barva);
+        if (this instanceof ITvar) {
+            return (ITvar)new Elipsa(xPos, yPos, šířka, výška, barva);
+        } else {
+            //Pomocná třída zabezpečující správnou funkci i v případě,
+            //kdy třída nebude implementovat rozhraní ITvar
+            class TE extends Elipsa implements ITvar {
+                TE(int x, int y, int s, int v, Barva b) {
+                    super(x, y, s, v, b);
+                }
+            }
+            return new TE(xPos, yPos, šířka, výška, barva);
+        }
     }
 
 
@@ -138,12 +179,10 @@ public class Elipsa implements ITvar
 //== PŘÍSTUPOVÉ METODY VLASTNOSTÍ INSTANCÍ =====================================
 
     /***************************************************************************
-     * Vrátí x-ovou (vodorovnou) souřadnici pozice instance.
+     * Vrátí x-ovou souřadnici pozice instance.
      *
-     * @return  Aktuální vodorovná (x-ová) souřadnice instance,
-     *          x=0 má levý okraj plátna, souřadnice roste doprava
+     * @return  x-ová souřadnice.
      */
-    @Override
     public int getX()
     {
         return xPos;
@@ -151,12 +190,10 @@ public class Elipsa implements ITvar
 
 
     /***************************************************************************
-     * Vrátí y-ovou (svislou) souřadnici pozice instance.
+     * Vrátí y-ovou souřadnici pozice instance.
      *
-     * @return  Aktuální svislá (y-ová) souřadnice instance,
-     *          y=0 má horní okraj plátna, souřadnice roste dolů
+     * @return  y-ová souřadnice.
      */
-    @Override
     public int getY()
     {
         return yPos;
@@ -166,26 +203,23 @@ public class Elipsa implements ITvar
     /***************************************************************************
      * Nastaví novou pozici instance.
      *
-     * @param x  Nově nastavovaná vodorovná (x-ová) souřadnice instance,
-     *           x=0 má levý okraj plátna, souřadnice roste doprava
-     * @param y  Nově nastavovaná svislá (y-ová) souřadnice instance,
-     *           y=0 má horní okraj plátna, souřadnice roste dolů
+     * @param x   Nová x-ová pozice instance
+     * @param y   Nová y-ová pozice instance
      */
-    @Override
     public void setPozice(int x, int y)
     {
+        smaž();
         xPos = x;
         yPos = y;
-        SprávcePlátna.getInstance().překresli();
+        nakresli();
     }
 
 
     /***************************************************************************
-     * Vrátí šířku instance v bodech.
+     * Vrátí šířku instance.
      *
-     * @return  Aktuální šířka instance v bodech
+     * @return  Šířka instance v bodech
      */
-    @Override
      public int getŠířka()
      {
          return šířka;
@@ -193,11 +227,10 @@ public class Elipsa implements ITvar
 
 
     /***************************************************************************
-     * Vrátí výšku instance v bodech.
+     * Vrátí výšku instance.
      *
-     * @return  Aktuální výška instance v bodech
+     * @return  Výška instance v bodech
      */
-    @Override
      public int getVýška()
      {
          return výška;
@@ -218,28 +251,28 @@ public class Elipsa implements ITvar
 
     /***************************************************************************
      * Nastaví nové rozměry instance. Nastavované rozměry musí být nezáporné,
-     * místo nulového rozměru se nastaví rozměr rovný jedné.
+     * avšak místo nulového rozměru se nastaví rozměr rovný jedné.
      *
      * @param šířka    Nově nastavovaná šířka; šířka >= 0
      * @param výška    Nově nastavovaná výška; výška >= 0
      */
-    @Override
     public void setRozměr(int šířka, int výška)
     {
         if( (šířka < 0) || (výška < 0) ) {
             throw new IllegalArgumentException(
             "Rozměry musí byt nezáporné: šířka=" + šířka + ", výška=" + výška);
         }
+        smaž();
         this.šířka = Math.max(1, šířka);
         this.výška = Math.max(1, výška);
-        SprávcePlátna.getInstance().překresli();
+        nakresli();
     }
 
 
     /***************************************************************************
-     * Vrátí aktuální barvu instance.
+     * Vrátí barvu instance.
      *
-     * @return Instance třídy {@code Barva} definující aktuálně nastavenou barvu
+     * @return  Instance třídy Barva definující nastavenou barvu.
      */
     public Barva getBarva()
     {
@@ -250,20 +283,21 @@ public class Elipsa implements ITvar
     /***************************************************************************
      * Nastaví novou barvu instance.
      *
-     * @param nová  Požadovaná nová barva
+     * @param nová  Požadovaná nová barva.
      */
     public void setBarva(Barva nová)
     {
-        barva = nová;
-        SprávcePlátna.getInstance().překresli();
+        if ( nová != Barva.ŽÁDNÁ) {
+            barva = nová;
+            nakresli();
+        }
     }
 
 
     /***************************************************************************
-     * Vrátí název instance, tj. název její třídy následovaný
-     * pořadím vytvoření instance v rámci instancí této třídy.
+     * Vrátí název instance, tj. název její třídy následovaný pořadím.
      *
-     * @return  Řetězec s názvem instance
+     * @return  Řetězec s názvem instance.
      */
     public String getNázev()
     {
@@ -275,10 +309,9 @@ public class Elipsa implements ITvar
 //== OSTATNÍ NESOUKROMÉ METODY INSTANCÍ ========================================
 
     /***************************************************************************
-     * Vrátí podpis instance, tj. její řetězcovou reprezentaci.
-     * Používá se především při ladění.
+     * Převede instanci na řetězec. Používá se především při ladění.
      *
-     * @return Řetězcová reprezentace (podpis) dané instance
+     * @return Řetězcová reprezentace dané instance.
      */
     @Override
     public String toString()
@@ -290,32 +323,24 @@ public class Elipsa implements ITvar
 
 
     /***************************************************************************
-     * Prostřednictvím dodaného kreslítka vykreslí obraz své instance.
-     *
-     * @param kreslítko Kreslítko, které nakreslí instanci
-     */
-    @Override
-    public void nakresli( Kreslítko kreslítko )
-    {
-        kreslítko.vyplňOvál( xPos, yPos, šířka, výška, barva );
-    }
-
-
-    /***************************************************************************
-     * Přihlásí se u správce plátna.
+     * Vykreslí obraz své instance na plátno.
      */
     public void nakresli()
     {
-        SprávcePlátna.getInstance().přidej(this);
+        PLÁTNO.setBarvaPopředí( barva );
+        PLÁTNO.zaplň(new java.awt.geom.Ellipse2D.Double
+                         (xPos, yPos, šířka, výška));
     }
 
 
     /***************************************************************************
-     * Odhlásí se u správce plátna.
+     * Smaže obraz své instance z plátna (nakreslí ji barvou pozadí plátna).
      */
     public void smaž()
     {
-        SprávcePlátna.getInstance().odstraň(this);
+        PLÁTNO.setBarvaPopředí( PLÁTNO.getBarvaPozadí() );
+        PLÁTNO.zaplň(new java.awt.geom.Ellipse2D.Double
+                         (xPos, yPos, šířka, výška));
     }
 
 
@@ -323,7 +348,7 @@ public class Elipsa implements ITvar
      * Přesune instanci o zadaný počet bodů vpravo,
      * při záporné hodnotě parametru vlevo.
      *
-     * @param vzdálenost Vzdálenost, o kterou se instance přesune
+     * @param vzdálenost Vzdálenost, o kterou se instance přesune.
      */
     public void posunVpravo(int vzdálenost)
     {
@@ -332,28 +357,20 @@ public class Elipsa implements ITvar
 
 
     /***************************************************************************
-     * Přesune instanci o implicitní počet bodů vpravo.
-     * Tento počet definuje správce plátna a je možno jej zjistit
-     * zavoláním jeho metody {@link getKrok()}
-     * a nastavit zavoláním jeho metody {@link setKrok(int)},
-     * resp. {@link setKrokRozměr(int,int,int)}.
+     * Přesune instanci o krok bodů vpravo.
      */
     public void posunVpravo()
     {
-        posunVpravo( SprávcePlátna.getInstance().getKrok() );
+        posunVpravo( krok );
     }
 
 
     /***************************************************************************
-     * Přesune instanci o implicitní počet bodů vlevo.
-     * Tento počet definuje správce plátna a je možno jej zjistit
-     * zavoláním jeho metody {@link getKrok()}
-     * a nastavit zavoláním jeho metody {@link setKrok(int)},
-     * resp. {@link setKrokRozměr(int,int,int)}.
+     * Přesune instanci o krok bodů vlevo.
      */
     public void posunVlevo()
     {
-        posunVpravo( -SprávcePlátna.getInstance().getKrok() );
+        posunVpravo( -krok );
     }
 
 
@@ -361,7 +378,7 @@ public class Elipsa implements ITvar
      * Přesune instanci o zadaný počet bodů dolů,
      * při záporné hodnotě parametru nahoru.
      *
-     * @param vzdálenost   Počet bodů, o které se instance přesune
+     * @param vzdálenost   Počet bodů, o které se instance přesune.
      */
     public void posunDolů(int vzdálenost)
     {
@@ -370,34 +387,25 @@ public class Elipsa implements ITvar
 
 
     /***************************************************************************
-     * Přesune instanci o implicitní počet bodů dolů.
-     * Tento počet definuje správce plátna a je možno jej zjistit
-     * zavoláním jeho metody {@link getKrok()}
-     * a nastavit zavoláním jeho metody {@link setKrok(int)},
-     * resp. {@link setKrokRozměr(int,int,int)}.
+     * Přesune instanci o krok bodů dolů.
      */
     public void posunDolů()
     {
-        posunDolů( SprávcePlátna.getInstance().getKrok() );
+        posunDolů( krok );
     }
 
 
     /***************************************************************************
-     * Přesune instanci o implicitní počet bodů nahoru.
-     * Tento počet definuje správce plátna a je možno jej zjistit
-     * zavoláním jeho metody {@link getKrok()}
-     * a nastavit zavoláním jeho metody {@link setKrok(int)},
-     * resp. {@link setKrokRozměr(int,int,int)}.
+     * Přesune instanci o krok bodů nahoru.
      */
     public void posunVzhůru()
     {
-        posunDolů( -SprávcePlátna.getInstance().getKrok() );
+        posunDolů( -krok );
     }
-
 
 
 //== SOUKROMÉ A POMOCNÉ METODY TŘÍDY ===========================================
 //== SOUKROMÉ A POMOCNÉ METODY INSTANCÍ ========================================
 //== INTERNÍ DATOVÉ TYPY =======================================================
-//== TESTOVACÍ METODY A TŘÍDY ==================================================
+//== TESTY A METODA MAIN =======================================================
 }

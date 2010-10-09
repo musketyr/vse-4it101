@@ -1,6 +1,5 @@
 
 
-
 /*******************************************************************************
  * Třída Kompresor slouží ke změně velikosti objektu
  * implementujicich rozhraní INafukovací.
@@ -10,8 +9,8 @@
  * Třída NENÍ vláknově bezpečná (thread-safe). Nepředpokládá,
  * že její instance boudou volány simultánně z různých vláken.
  *
- * @author Rudolf PECINOVSKÝ
- * @version 6.00 - 2010-07-10
+ * @author     Rudolf PECINOVSKÝ
+ * @version    1.01, 10.3.2003
  */
 public class Kompresor
 {

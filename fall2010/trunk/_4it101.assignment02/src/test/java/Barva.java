@@ -18,8 +18,8 @@ import java.util.Map;
  *  Není definována jako výčtový typ, aby si uživatel mohl libovolně přidávat
  *  vlastní barvy.
  *
- * @author Rudolf PECINOVSKÝ
- * @version 6.00 - 2010-07-10
+ * @author   Rudolf PECINOVSKÝ
+ * @version  3.00.001
  */
 public class Barva
 {

@@ -4,8 +4,8 @@
  * Třída {@code Přesouvač} slouží k plynulému přesouvání instancí tříd
  * implementujicich rozhraní {@link IPosuvný}.
  *
- * @author Rudolf PECINOVSKÝ
- * @version 6.00 - 2010-07-10
+ * @author   Rudolf PECINOVSKÝ
+ * @version  5.00.000
  */
 public class Přesouvač
 {
@@ -92,7 +92,7 @@ public class Přesouvač
 
 
     /***************************************************************************
-     * Plynule přesune zadaný objekt o zadaný počet obrazových bodů.
+     * Plynule přesune zadaný objekt o požadovaný počet obrazových bodů.
      *
      * @param doprava   Počet bodů, o než se objekt přesune doprava
      * @param dolů      Počet bodů, o než se objekt přesune dolů
@@ -109,7 +109,8 @@ public class Přesouvač
         double x  = px + .4;
         double y  = py + .4;
 
-        for (int i=kroků;   i > 0;   i--)  {
+        for(int i=kroků;   i > 0;   i-- )
+        {
             x = x + dx;
             y = y + dy;
             objekt.setPozice( (int)x, (int)y );

@@ -4,10 +4,10 @@
  * Instance rozhraní {@code IPosuvný} představují geometrické tvary,
  * které umějí prozradit a nastavit svoji pozici.
  *
- * @author Rudolf PECINOVSKÝ
- * @version 6.00 - 2010-07-10
+ * @author    Rudolf PECINOVSKÝ
+ * @version   0.00.000
  */
-public interface IPosuvný extends IKreslený
+public interface IPosuvný
 {
 //== VEŘEJNÉ KONSTANTY =========================================================
 //== DEKLAROVANÉ METODY ========================================================
@@ -15,8 +15,7 @@ public interface IPosuvný extends IKreslený
     /***************************************************************************
      * Vrátí x-ovou (vodorovnou) souřadnici pozice instance.
      *
-     * @return  Aktuální vodorovná (x-ová) souřadnice instance,
-     *          x=0 má levý okraj plátna, souřadnice roste doprava
+     * @return  x-ová souřadnice.
      */
 //     @Override
     public int getX();
@@ -25,8 +24,7 @@ public interface IPosuvný extends IKreslený
     /***************************************************************************
      * Vrátí y-ovou (svislou) souřadnici pozice instance.
      *
-     * @return  Aktuální svislá (y-ová) souřadnice instance,
-     *          y=0 má horní okraj plátna, souřadnice roste dolů
+     * @return  y-ová souřadnice.
      */
 //     @Override
     public int getY();
@@ -35,10 +33,8 @@ public interface IPosuvný extends IKreslený
     /***************************************************************************
      * Nastaví novou pozici instance.
      *
-     * @param x  Nově nastavovaná vodorovná (x-ová) souřadnice instance,
-     *           x=0 má levý okraj plátna, souřadnice roste doprava
-     * @param y  Nově nastavovaná svislá (y-ová) souřadnice instance,
-     *           y=0 má horní okraj plátna, souřadnice roste dolů
+     * @param x   Nová x-ová pozice instance
+     * @param y   Nová y-ová pozice instance
      */
 //     @Override
     public void setPozice(int x, int y);

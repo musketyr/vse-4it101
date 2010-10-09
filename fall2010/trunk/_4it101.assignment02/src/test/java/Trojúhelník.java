@@ -1,14 +1,16 @@
 
 
-
 /*******************************************************************************
  * Instance třídy {@code Trojúhelník} představují trojúhelníky určené
  * pro práci na virtuálním plátně při prvním seznámení s třídami a objekty.
  *
- * @author Rudolf PECINOVSKÝ
- * @version 6.00 - 2010-07-10
+ * Výchozí podoba třídy určená pro první seznámení s třídami a objekty.
+ *
+ * @author   Rudolf PECINOVSKÝ
+ * @version  3.00.002
  */
-public class Trojúhelník implements ITvar
+public class Trojúhelník
+        implements IPosuvný, ITvar, INafukovací, IHýbací
 {
 //== KONSTANTNÍ ATRIBUTY TŘÍDY =================================================
 
@@ -21,9 +23,19 @@ public class Trojúhelník implements ITvar
      *  kdy uživatel žádný preferovný směr nezadá.    */
     public static final Směr8 IMPLICITNÍ_SMĚR = Směr8.SEVER;
 
+    /** Maximální povolená velikost kroku. */
+    public static final int MAX_KROK = 100;
+
+    /** Plátno, na které se bude instance kreslit. */
+    private static final Plátno PLÁTNO = Plátno.getPlátno();
+
 
 
 //== PROMĚNNÉ ATRIBUTY TŘÍDY ===================================================
+
+    /** Počet pixelů, o něž se instance posune
+     *  po bezparametrickém posunovém povelu */
+    private static int krok = 50;
 
     /** Počet vytvořených instancí */
     private static int počet = 0;
@@ -43,54 +55,72 @@ public class Trojúhelník implements ITvar
 
 //== PROMĚNNÉ ATRIBUTY INSTANCÍ ================================================
 
-    /** Bodová x-ová souřadnice instance. */
-    private int xPos;
-
-    /** Bodová y-ová souřadnice instance. */
-    private int yPos;
-
-    /** Šířka v bodech. */
-    protected int šířka;
-
-    /** Výška v bodech. */
-    protected int výška;
-
-    /** Barva instance. */
-    private Barva barva;
-
-    /** Směr, do nějž je otočen vrchol trojúhelníku. */
-    private Směr8   směr;
+    private int    xPos;    //Bodová x-ová souřadnice počátku
+    private int    yPos;    //Bodová y-ová souřadnice počátku
+    private int    šířka;   //šířka v bodech
+    private int    výška;   //Výška v bodech
+    private Barva  barva;   //Barva instance
+    private Směr8   směr;   //Směr, do nějž je otočen vrchol trojúhelníku
 
 
 
 //== PŘÍSTUPOVÉ METODY VLASTNOSTÍ TŘÍDY ========================================
+
+    /***************************************************************************
+     * Vrátí velikost implicitního kroku, o který se instance přesune
+     * při volaní bezparametrickych metod přesunu.
+     *
+     * @return Velikost implicitního kroku v bodech
+     */
+     public static int getKrok()
+     {
+         return krok;
+     }
+
+
+    /***************************************************************************
+     * Nastaví velikost implicitního kroku, o který se instance přesune
+     * při volaní bezparametrickych metod přesunu.
+     *
+     * @param velikost  Velikost implicitního kroku v bodech;<br/>
+     *                  musí platit:  0 &lt;= velikost &lt;= {@link #MAX_KROK}
+     */
+    public static void setKrok( int velikost )
+    {
+        if( (velikost < 0)  || (velikost > MAX_KROK) ) {
+            throw new IllegalArgumentException(
+                "Krok musí byt z intervalu <0;" + MAX_KROK + ">." );
+        }
+        krok = velikost;
+    }
+
+
+
 //== OSTATNÍ NESOUKROMÉ METODY TŘÍDY ===========================================
 
 //##############################################################################
 //== KONSTRUKTORY A TOVÁRNÍ METODY =============================================
 
     /***************************************************************************
-     * Připraví novou instanci s implicitním umístěním, rozměry, barvou
+     * Připraví novou instanci s implicitními rozměry, umístěním, barvou
      * a natočením.
      * Instance bude umístěna v levém horním rohu plátna
      * a bude mít implicitní barvu,
-     * výšku rovnu kroku a šířku dvojnásobku kroku plátna
+     * výšku rovnu kroku a šířku dvojnásobku kroku (tj. implicitně 50x100 bodů)
      * a bude natočena vrcholem na sever.
      */
     public Trojúhelník()
     {
-        this( 0, 0, 2*SprávcePlátna.getInstance().getKrok(), SprávcePlátna.getInstance().getKrok() );
+        this( 0, 0, 2*krok, krok );
     }
 
 
     /***************************************************************************
-     * Připraví novou instanci se zadanou pozicí a rozměry
+     * Připraví novou instanci se zadanou polohou a rozměry
      * a implicitní barvou a směrem natočení.
      *
-     * @param x       Vodorovná (x-ová) souřadnice instance,
-     *                x=0 má levý okraj plátna, souřadnice roste doprava
-     * @param y       Svislá (y-ová) souřadnice instance,
-     *                y=0 má horní okraj plátna, souřadnice roste dolů
+     * @param x       x-ová souřadnice instance, x>=0, x=0 má levý okraj plátna
+     * @param y       y-ová souřadnice instance, y>=0, y=0 má horní okraj plátna
      * @param šířka   Šířka vytvářené instance,  šířka > 0
      * @param výška   Výška vytvářené instance,  výška > 0
      */
@@ -101,13 +131,11 @@ public class Trojúhelník implements ITvar
 
 
     /***************************************************************************
-     * Připraví novou instanci se zadanou pozicí, rozměry a směrem natočení
+     * Připraví novou instanci se zadanou polohou, rozměry a směrem natočení
      * a s implicitní barvou.
      *
-     * @param x       Vodorovná (x-ová) souřadnice instance,
-     *                x=0 má levý okraj plátna, souřadnice roste doprava
-     * @param y       Svislá (y-ová) souřadnice instance,
-     *                y=0 má horní okraj plátna, souřadnice roste dolů
+     * @param x       x-ová souřadnice, x>=0, x=0 má levý okraj plátna
+     * @param y       y-ová souřadnice, y>=0, y=0 má horní okraj plátna
      * @param šířka   Šířka instance,   šířka > 0
      * @param výška   Výška instance,   výška > 0
      * @param směr    Směr, do nějž bude natočen vrchol trojúhelníku -
@@ -120,13 +148,11 @@ public class Trojúhelník implements ITvar
 
 
     /***************************************************************************
-     * Připraví novou instanci se zadanou pozicí, rozměry a barvou.
+     * Připraví novou instanci se zadanými rozměry, polohou a barvou.
      * Směr natočení bude implicitní, tj. na sever.
      *
-     * @param x       Vodorovná (x-ová) souřadnice instance,
-     *                x=0 má levý okraj plátna, souřadnice roste doprava
-     * @param y       Svislá (y-ová) souřadnice instance,
-     *                y=0 má horní okraj plátna, souřadnice roste dolů
+     * @param x       x-ová souřadnice instance, x>=0, x=0 má levý okraj plátna
+     * @param y       y-ová souřadnice instance, y>=0, y=0 má horní okraj plátna
      * @param šířka   Šířka vytvářené instance,  šířka > 0
      * @param výška   Výška vytvářené instance,  výška > 0
      * @param barva   Barva vytvářené instance
@@ -138,13 +164,11 @@ public class Trojúhelník implements ITvar
 
 
     /***************************************************************************
-     * Připraví novou instanci se zadanou pozicí, rozměry, barvou,
+     * Připraví novou instanci se zadanými rozměry, polohou, barvou,
      * i směrem natočení.
      *
-     * @param x       Vodorovná (x-ová) souřadnice instance,
-     *                x=0 má levý okraj plátna, souřadnice roste doprava
-     * @param y       Svislá (y-ová) souřadnice instance,
-     *                y=0 má horní okraj plátna, souřadnice roste dolů
+     * @param x       x-ová souřadnice instance, x>=0, x=0 má levý okraj plátna
+     * @param y       y-ová souřadnice instance, y>=0, y=0 má horní okraj plátna
      * @param šířka   Šířka vytvářené instance,  šířka > 0
      * @param výška   Výška vytvářené instance,  výška > 0
      * @param barva   Barva vytvářené instance
@@ -155,9 +179,9 @@ public class Trojúhelník implements ITvar
                         Směr8 směr )
     {
         //Test platnosti parametru
-        if ((šířka<=0) || (výška<=0)) {
+        if( (x<0) || (y<0) || (šířka<=0) || (výška<=0) ) {
             throw new IllegalArgumentException(
-                "\nnew Trojúhelník - Parametry nemají povolené hodnoty: x="
+                "\nParametry nemají povolené hodnoty: x="
                 + x + ", y=" + y + ", šířka=" + šířka + ", výška=" + výška );
         }
 
@@ -168,6 +192,7 @@ public class Trojúhelník implements ITvar
         this.výška = výška;
         this.barva = barva;
         this.směr  = směr;
+        nakresli();
     }
 
 
@@ -177,10 +202,20 @@ public class Trojúhelník implements ITvar
      *
      * @return Požadovaná kopie
      */
-    @Override
-    public Trojúhelník kopie()
+    public ITvar kopie()
     {
-        return new Trojúhelník(xPos, yPos, šířka, výška, barva,směr);
+        if (this instanceof ITvar) {
+            return (ITvar)new Trojúhelník(xPos, yPos, šířka, výška, barva,směr);
+        } else {
+            //Pomocná třída zabezpečující správnou funkci i v případě,
+            //kdy třída nebude implementovat rozhraní ITvar
+            class TT extends Trojúhelník implements ITvar {
+                TT(int x, int y, int s, int v, Barva b, Směr8 sm) {
+                    super(x, y, s, v, b, sm);
+                }
+            }
+            return new TT(xPos, yPos, šířka, výška, barva, směr);
+        }
     }
 
 
@@ -189,12 +224,10 @@ public class Trojúhelník implements ITvar
 //== PŘÍSTUPOVÉ METODY VLASTNOSTÍ INSTANCÍ =====================================
 
     /***************************************************************************
-     * Vrátí x-ovou (vodorovnou) souřadnici pozice instance.
+     * Vrátí x-ovou souřadnici pozice instance.
      *
-     * @return  Aktuální vodorovná (x-ová) souřadnice instance,
-     *          x=0 má levý okraj plátna, souřadnice roste doprava
+     * @return  x-ová souřadnice.
      */
-    @Override
     public int getX()
     {
         return xPos;
@@ -202,12 +235,10 @@ public class Trojúhelník implements ITvar
 
 
     /***************************************************************************
-     * Vrátí y-ovou (svislou) souřadnici pozice instance.
+     * Vrátí y-ovou souřadnici pozice instance.
      *
-     * @return  Aktuální svislá (y-ová) souřadnice instance,
-     *          y=0 má horní okraj plátna, souřadnice roste dolů
+     * @return  y-ová souřadnice.
      */
-    @Override
     public int getY()
     {
         return yPos;
@@ -217,26 +248,23 @@ public class Trojúhelník implements ITvar
     /***************************************************************************
      * Nastaví novou pozici instance.
      *
-     * @param x  Nově nastavovaná vodorovná (x-ová) souřadnice instance,
-     *           x=0 má levý okraj plátna, souřadnice roste doprava
-     * @param y  Nově nastavovaná svislá (y-ová) souřadnice instance,
-     *           y=0 má horní okraj plátna, souřadnice roste dolů
+     * @param x   Nová x-ová pozice instance
+     * @param y   Nová y-ová pozice instance
      */
-    @Override
     public void setPozice(int x, int y)
     {
+        smaž();
         xPos = x;
         yPos = y;
-        SprávcePlátna.getInstance().překresli();
+        nakresli();
     }
 
 
     /***************************************************************************
-     * Vrátí šířku instance v bodech.
+     * Vrátí šířku instance.
      *
-     * @return  Aktuální šířka instance v bodech
+     * @return  Šířka instance v bodech
      */
-    @Override
      public int getŠířka()
      {
          return šířka;
@@ -244,11 +272,10 @@ public class Trojúhelník implements ITvar
 
 
     /***************************************************************************
-     * Vrátí výšku instance v bodech.
+     * Vrátí výšku instance.
      *
-     * @return  Aktuální výška instance v bodech
+     * @return  Výška instance v bodech
      */
-    @Override
      public int getVýška()
      {
          return výška;
@@ -269,28 +296,28 @@ public class Trojúhelník implements ITvar
 
     /***************************************************************************
      * Nastaví nové rozměry instance. Nastavované rozměry musí být nezáporné,
-     * místo nulového rozměru se nastaví rozměr rovný jedné.
+     * avšak místo nulového rozměru se nastaví rozměr rovný jedné.
      *
      * @param šířka    Nově nastavovaná šířka; šířka >= 0
      * @param výška    Nově nastavovaná výška; výška >= 0
      */
-    @Override
     public void setRozměr(int šířka, int výška)
     {
         if( (šířka < 0) || (výška < 0) ) {
             throw new IllegalArgumentException(
             "Rozměry musí byt nezáporné: šířka=" + šířka + ", výška=" + výška);
         }
+        smaž();
         this.šířka = Math.max(1, šířka);
         this.výška = Math.max(1, výška);
-        SprávcePlátna.getInstance().překresli();
+        nakresli();
     }
 
 
     /***************************************************************************
-     * Vrátí aktuální barvu instance.
+     * Vrátí barvu instance.
      *
-     * @return Instance třídy {@code Barva} definující aktuálně nastavenou barvu
+     * @return  Instance třídy Barva definující nastavenou barvu.
      */
     public Barva getBarva()
     {
@@ -301,31 +328,21 @@ public class Trojúhelník implements ITvar
     /***************************************************************************
      * Nastaví novou barvu instance.
      *
-     * @param nová  Požadovaná nová barva
+     * @param nová  Požadovaná nová barva.
      */
     public void setBarva(Barva nová)
     {
-        barva = nová;
-        SprávcePlátna.getInstance().překresli();
+        if ( nová != Barva.ŽÁDNÁ) {
+            barva = nová;
+            nakresli();
+        }
     }
 
 
     /***************************************************************************
-     * Vrátí název instance, tj. název její třídy následovaný
-     * pořadím vytvoření instance v rámci instancí této třídy.
+     * Vrátí směr instance. tj. směr, co nějž je otočen vrchol.
      *
-     * @return  Řetězec s názvem instance
-     */
-    public String getNázev()
-    {
-        return název;
-    }
-
-
-    /***************************************************************************
-     * Vrátí aktuální směr instance. tj. směr, do nějž je natočen vrchol.
-     *
-     * @return  Instance třídy {@code Směr8} definující aktuálně nastavený směr
+     * @return  Instance třídy Směr8 definující nastavený směr.
      */
     public Směr8 getSměr()
     {
@@ -336,14 +353,25 @@ public class Trojúhelník implements ITvar
     /***************************************************************************
      * Nastaví nový směr instance.
      *
-     * @param nový  Požadovaný nový směr
+     * @param nový  Požadovaný nový směr.
      */
     public void setSměr(Směr8 nový)
     {
         if (nový != Směr8.ŽÁDNÝ) {
             směr = nový;
-            SprávcePlátna.getInstance().překresli();
+            nakresli();
         }
+    }
+
+
+    /***************************************************************************
+     * Vrátí název instance, tj. název její třídy následovaný pořadím.
+     *
+     * @return  Řetězec s názvem instance.
+     */
+    public String getNázev()
+    {
+        return název;
     }
 
 
@@ -351,10 +379,9 @@ public class Trojúhelník implements ITvar
 //== OSTATNÍ NESOUKROMÉ METODY INSTANCÍ ========================================
 
     /***************************************************************************
-     * Vrátí podpis instance, tj. její řetězcovou reprezentaci.
-     * Používá se především při ladění.
+     * Převede instanci na řetězec. Používá se především při ladění.
      *
-     * @return Řetězcová reprezentace (podpis) dané instance
+     * @return Řetězcová reprezentace dané instance.
      */
     @Override
     public String toString()
@@ -366,33 +393,24 @@ public class Trojúhelník implements ITvar
 
 
     /***************************************************************************
-     * Prostřednictvím dodaného kreslítka vykreslí obraz své instance.
-     *
-     * @param kreslítko Kreslítko, které nakreslí instanci
-     */
-    @Override
-    public void nakresli( Kreslítko kreslítko )
-    {
-        int[][] points = getVrcholy();
-        kreslítko.vyplňPolygon( points[0], points[1], barva );
-    }
-
-
-    /***************************************************************************
-     * Přihlásí se u správce plátna.
+     * Vykreslí obraz své instance na plátno.
      */
     public void nakresli()
     {
-        SprávcePlátna.getInstance().přidej(this);
+        PLÁTNO.setBarvaPopředí( barva );
+        int[][] points = getVrcholy();
+        PLÁTNO.zaplň(new java.awt.Polygon(points[0], points[1], 3));
     }
 
 
     /***************************************************************************
-     * Odhlásí se u správce plátna.
+     * Smaže obraz své instance z plátna (nakreslí ji barvou pozadí plátna).
      */
     public void smaž()
     {
-        SprávcePlátna.getInstance().odstraň(this);
+        PLÁTNO.setBarvaPopředí( PLÁTNO.getBarvaPozadí() );
+        int[][] points = getVrcholy();
+        PLÁTNO.zaplň(new java.awt.Polygon(points[0], points[1], 3));
     }
 
 
@@ -400,7 +418,7 @@ public class Trojúhelník implements ITvar
      * Přesune instanci o zadaný počet bodů vpravo,
      * při záporné hodnotě parametru vlevo.
      *
-     * @param vzdálenost Vzdálenost, o kterou se instance přesune
+     * @param vzdálenost Vzdálenost, o kterou se instance přesune.
      */
     public void posunVpravo(int vzdálenost)
     {
@@ -409,28 +427,20 @@ public class Trojúhelník implements ITvar
 
 
     /***************************************************************************
-     * Přesune instanci o implicitní počet bodů vpravo.
-     * Tento počet definuje správce plátna a je možno jej zjistit
-     * zavoláním jeho metody {@link getKrok()}
-     * a nastavit zavoláním jeho metody {@link setKrok(int)},
-     * resp. {@link setKrokRozměr(int,int,int)}.
+     * Přesune instanci o krok bodů vpravo.
      */
     public void posunVpravo()
     {
-        posunVpravo( SprávcePlátna.getInstance().getKrok() );
+        posunVpravo( krok );
     }
 
 
     /***************************************************************************
-     * Přesune instanci o implicitní počet bodů vlevo.
-     * Tento počet definuje správce plátna a je možno jej zjistit
-     * zavoláním jeho metody {@link getKrok()}
-     * a nastavit zavoláním jeho metody {@link setKrok(int)},
-     * resp. {@link setKrokRozměr(int,int,int)}.
+     * Přesune instanci o krok bodů vlevo.
      */
     public void posunVlevo()
     {
-        posunVpravo( -SprávcePlátna.getInstance().getKrok() );
+        posunVpravo( -krok );
     }
 
 
@@ -438,7 +448,7 @@ public class Trojúhelník implements ITvar
      * Přesune instanci o zadaný počet bodů dolů,
      * při záporné hodnotě parametru nahoru.
      *
-     * @param vzdálenost   Počet bodů, o které se instance přesune
+     * @param vzdálenost   Počet bodů, o které se instance přesune.
      */
     public void posunDolů(int vzdálenost)
     {
@@ -447,28 +457,20 @@ public class Trojúhelník implements ITvar
 
 
     /***************************************************************************
-     * Přesune instanci o implicitní počet bodů dolů.
-     * Tento počet definuje správce plátna a je možno jej zjistit
-     * zavoláním jeho metody {@link getKrok()}
-     * a nastavit zavoláním jeho metody {@link setKrok(int)},
-     * resp. {@link setKrokRozměr(int,int,int)}.
+     * Přesune instanci o krok bodů dolů.
      */
     public void posunDolů()
     {
-        posunDolů( SprávcePlátna.getInstance().getKrok() );
+        posunDolů( krok );
     }
 
 
     /***************************************************************************
-     * Přesune instanci o implicitní počet bodů nahoru.
-     * Tento počet definuje správce plátna a je možno jej zjistit
-     * zavoláním jeho metody {@link getKrok()}
-     * a nastavit zavoláním jeho metody {@link setKrok(int)},
-     * resp. {@link setKrokRozměr(int,int,int)}.
+     * Přesune instanci o krok bodů nahoru.
      */
     public void posunVzhůru()
     {
-        posunDolů( -SprávcePlátna.getInstance().getKrok() );
+        posunDolů( -krok );
     }
 
 
@@ -537,5 +539,5 @@ public class Trojúhelník implements ITvar
 
 
 //== INTERNÍ DATOVÉ TYPY =======================================================
-//== TESTOVACÍ METODY A TŘÍDY ==================================================
+//== TESTY A METODA MAIN =======================================================
 }

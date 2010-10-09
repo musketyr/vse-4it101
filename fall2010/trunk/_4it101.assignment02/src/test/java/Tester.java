@@ -21,9 +21,9 @@ public final class Tester
     {
         try {
             new AssignmentsTester(
-                    Assignment2b.class, 
+                    Assignment3.class, 
                     Class.forName(název),
-                    "ukol01b.score.xml"
+                    "ukol03.score.xml"
             ).showReport();
         } catch (ClassNotFoundException e) {
             IO.zpráva("Třída " + název + " nebyla nalezena!");

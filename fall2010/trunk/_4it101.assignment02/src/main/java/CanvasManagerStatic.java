@@ -8,5 +8,6 @@ import org.duckapter.annotation.Private;
 import org.duckapter.annotation.Static;
 
 public interface CanvasManagerStatic {
-    @Private(AT_LEAST) @Static @Field @Alias("SP") void setCM(SprávcePlátna singleton);
+    //@Private(AT_LEAST) @Static @Field @Alias("SP") void setCM(SprávcePlátna singleton);
+    @Static CanvasManager getInstance();
 }

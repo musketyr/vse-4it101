@@ -11,6 +11,7 @@
   <url>http://maven.apache.org</url>
 
     <build>
+        <finalName>DU_02</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

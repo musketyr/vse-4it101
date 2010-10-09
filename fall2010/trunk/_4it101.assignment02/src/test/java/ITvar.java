@@ -4,29 +4,104 @@
  * Instance rozhraní {@code ITvar} představují obecné geometrické tvary
  * určené pro práci na virtuálním plátně při seznamování s třídami a objekty.
  *
- * @author Rudolf PECINOVSKÝ
- * @version 6.00 - 2010-07-10
+ * @author    Rudolf PECINOVSKÝ
+ * @version   0.00.000
  */
-public interface ITvar extends IHýbací, IKopírovatelný
+public interface ITvar extends Cloneable
 {
 //== VEŘEJNÉ KONSTANTY =========================================================
 //== DEKLAROVANÉ METODY ========================================================
 
     /***************************************************************************
-     * Vrátí svoji kopii, tj. instanci s naprosto shodnými vlastnostmi
-     * s výjimkou těch, které podle kontraktu shodné být nesmějí - v tomto
-     * případě stejný tvar, stejně velký, stejně umístěný a se stejnou barvou.
-     * <p>
-     * Oproti verzi zděděné z předka {@code IKopírovatelný} omezuje typ
-     * vrácené hodnoty na sebe sama, tj. na {@code ITvar}.
+     * Vrátí x-ovou souřadnici pozice instance.
+     *
+     * @return  x-ová souřadnice.
+     */
+//     @Override
+    public int getX();
+
+
+    /***************************************************************************
+     * Vrátí y-ovou souřadnici pozice instance.
+     *
+     * @return  y-ová souřadnice.
+     */
+//     @Override
+    public int getY();
+
+
+    /***************************************************************************
+     * Nastaví novou pozici instance.
+     *
+     * @param x   Nová x-ová pozice instance
+     * @param y   Nová y-ová pozice instance
+     */
+//     @Override
+    public void setPozice(int x, int y);
+
+
+    /***************************************************************************
+     * Vrátí šířku instance.
+     *
+     * @return  Šířka instance v bodech
+     */
+//     @Override
+     public int getŠířka();
+
+
+    /***************************************************************************
+     * Vrátí výšku instance.
+     *
+     * @return  Výška instance v bodech
+     */
+//     @Override
+     public int getVýška();
+
+
+    /***************************************************************************
+     * Nastaví nové rozměry instance.
+     *
+     * @param šířka    Nově nastavovaná šířka; šířka>0
+     * @param výška    Nově nastavovaná výška; výška>0
+     */
+//     @Override
+    public void setRozměr(int šířka, int výška);
+
+
+    /***************************************************************************
+     * Vykreslí obraz své instance na plátno.
+     */
+//     @Override
+    public void nakresli();
+
+
+    /***************************************************************************
+     * Smaže obraz své instance z plátna (nakreslí ji barvou pozadí plátna).
+     */
+//     @Override
+    public void smaž();
+
+
+    /***************************************************************************
+     * Vrátí kopii daného tvaru, tj. stejný tvar, stejně velký, stejně umístěný
+     * a se stejnou barvou.
      *
      * @return Požadovaná kopie
      */
-    @Override
+//     @Override
     public ITvar kopie();
 
 
 
 //== ZDĚDĚNÉ METODY ============================================================
+//
+//    /***************************************************************************
+//     * Vrátí kopii daného tvaru, tj. stejný tvar, stejně velký, stejně umístěný
+//     * a se stejnou barvou.
+//     *
+//     * @return Požadovaná kopie
+//     */
+//    public ITvar clone();
+//
 //== INTERNÍ DATOVÉ TYPY =======================================================
 }
