@@ -2,65 +2,44 @@
 <score>
 	<suite name="Assignment2b">
 	    <check 
-	        points="0.2"
+	        points="0.1"
 	        name="testName" 
 	        message="Třída je správně pojmenována" />
 	    <check 
-	        points="0.2"
+	        points="0.1"
 	        name="testStringConstructor" 
 	        message="Testovací třída je vytvořena podle správné šablony" />
 	    <check 
-	        points="0.2"
+	        points="0.1"
 	        name="testInitBySetUp" 
 	        message="Je vytvořen testovací přípravek" />
 	    <check 
-	        points="0.2"
+	        points="0.1"
 	        name="testFixturesAreShapes" 
 	        message="Přípravek je tvořen nejméně pěti grafickými objekty" />
         <check 
-            points="0.2"
+            points="0.1"
             name="testSetUpUsesMessage" 
-            message="Vytvoření přípravku musí končit zobrazením zprávy." />            	        
-
+            message="Vytvoření přípravku musí končit zobrazením zprávy" />            	        
         <check 
-            points="0.3"
-            name="testHasMovement1" 
-            message="Test má metodu 'testPosuny()'" />
+            points="0.5"
+            name="testTestMethodsCount" 
+            message="Test má alespoň 4 testovací metody" />
         <check 
-            points="0.3"
-            name="testHasMovement2" 
-            message="Test má metodu 'testPosuny2()'" />
+            points="0.5"
+            name="testTestSmoothMethodsCount" 
+            message="Test má alespoň dvě testovací metody, které hýbou plynule." />
         <check 
-            points="0.3"
-            name="testHasSmoothMovement1" 
-            message="Test má metodu 'testPlynuléPosuny()'" />                  
+            points="0.5"
+            name="testAllMethodsMoves" 
+            message="Každá testovací metoda hýbe alespoň jedním tvarem." />                  
         <check 
-            points="0.3"
-            name="testHasSmoothMovement2" 
-            message="Test má metodu 'testPlynuléPosuny2()'" />
+            points="0.5"
+            name="testSmoothMoves" 
+            message="Plynulé testovací metody doopravdy hýbou plynule." />
         <check 
-            points="0.3"
-            name="testMovement1Moves" 
-            message="Metoda 'testPosuny()' správně animuje" />        
-        <check 
-            points="0.3"
-            name="testMovement2Moves" 
-            message="Metoda 'testPosuny2()' správně animuje" />
-        <check 
-            points="0.3"
-            name="testSmoothMovement1Moves" 
-            message="Metoda 'testPlynuléPosuny()' správně animuje" />
-        <check 
-            points="0.3"
-            name="testSmoothMovement2Moves" 
-            message="Metoda 'testPlynuléPosuny2()' správně animuje" />
-        <check 
-            points="0.3"
-            name="testSmoothEndsSameWay1" 
-            message="Metoda 'testPlynuléPosuny()' zanechá plátno ve stejném stavu jako metoda 'testPosuny()'" />    
-        <check 
-            points="0.3"
-            name="testSmoothEndsSameWay2" 
-            message="Metoda 'testPlynuléPosuny2()' zanechá plátno ve stejném stavu jako metoda 'testPosuny2()'" />                                 
+            points="0.5"
+            name="testSameEnd" 
+            message="Plynulé testovací metody zanechají plátno ve stejném stavu jako metody neplynulé." />                                     
 	</suite>
 </score>
