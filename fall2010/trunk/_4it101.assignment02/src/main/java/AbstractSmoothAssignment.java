@@ -98,10 +98,10 @@ public abstract class AbstractSmoothAssignment extends TestCase  implements IO.I
                 // do nothing
             }
         }
-        assertTrue(2 <= count);
+        assertTrue(4 <= count);
     }
 
-    public void testSmoothMoves() throws Exception {
+    public void testSmoothMoves2() throws Exception {
         int count = 0;
         for (TestMethod method : as(HasSmoothTests.class).allTests()) {
             try{
@@ -110,6 +110,36 @@ public abstract class AbstractSmoothAssignment extends TestCase  implements IO.I
             } catch (AssertionFailedError e){
                 // do nothing
             }   
+        }
+        assertTrue(2 <= count);
+    }
+    
+    public void testSmoothMoves() throws Exception {
+        Map<String, TestMethod> methods = Maps.newHashMap();
+        for (TestMethod method : as(HasTests.class).allTests()) {
+            methods.put(WrapperHelper.tryGetMethod(method).getName(), method);
+        }
+        Set<String> used = Sets.newHashSet();
+        Pattern pattern = Pattern.compile(HasSmoothTests.SMOOTH_METHOD_REGEXP);
+        int count = 0;
+        for (Entry<String, TestMethod> entry : methods.entrySet()) {
+            if (used.contains(entry.getKey())) {
+                continue;
+            }
+            used.add(entry.getKey());
+            Matcher match = pattern.matcher(entry.getKey());
+            if (match.matches()) {
+                String methodName = match.group(1);
+                used.add(methodName);
+                TestMethod baseMethod = methods.get(methodName);
+                assertNotNull(baseMethod);
+                as(BasicTestCase.class).setUp();
+                beforeShapeChange();
+                entry.getValue().testIt();
+                assertMoved(true);
+                as(BasicTestCase.class).tearDown();
+                count ++;
+            }
         }
         assertTrue(2 <= count);
     }
@@ -132,7 +162,9 @@ public abstract class AbstractSmoothAssignment extends TestCase  implements IO.I
                 String methodName = match.group(1);
                 used.add(methodName);
                 TestMethod baseMethod = methods.get(methodName);
-                assertNotNull(baseMethod);
+                if (baseMethod == null) {
+                    continue;
+                }
                 assertSameEnd(baseMethod, entry.getValue());
                 atLeastOneMatches |= true;
             }

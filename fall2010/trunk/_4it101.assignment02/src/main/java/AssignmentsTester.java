@@ -33,27 +33,10 @@ public class AssignmentsTester {
     public void showReport() {
         try {
             Report report = getReport();
-            JDialog dialog = new JDialog();
-            JTextArea text = new JTextArea(report.toString());
-            text.setEditable(false);
-            Font font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
-            text.setFont(font);
-            dialog.add(text);
-            center(dialog);
-            dialog.setVisible(true);
-            dialog.setTitle("Výsledek vyhodnocení");
+            System.out.println(report.toString());
         } catch (Throwable e1) {
             e1.printStackTrace();
         }
-    }
-
-    private void center(JDialog dialog) {
-        Dimension dim = dialog.getToolkit().getScreenSize();
-        dialog.setSize((int) (Math.round(dim.getWidth() / 3 * 2)),
-                (int) (Math.round(dim.getHeight() / 3 * 2)));
-        Rectangle abounds = dialog.getBounds();
-        dialog.setLocation((int)Math.round((dim.width - abounds.width) / 2),
-                (int)Math.round((dim.height - abounds.height) / 2));
     }
 
     private Report getReport() {

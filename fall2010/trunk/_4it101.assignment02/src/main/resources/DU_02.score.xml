@@ -16,23 +16,19 @@
         <check 
             points="0.2"
             name="testFixturesAreShapes" 
-            message="Přípravek je tvořen nejméně pěti grafickými objekty" />
+            message="Přípravek je tvořen nejméně 5 grafickými objekty" />
         <check 
             points="0.2"
             name="testSetUpUsesMessage" 
             message="Vytvoření přípravku musí končit zobrazením zprávy" />                      
-        <check 
-            points="0.5"
-            name="testTestMethodsCount" 
-            message="Test má alespoň 4 testovací metody" />
         <check
             points="0.5"
-            name="test2MethodsMoves"
-            message="Nejméně 2 testovací metody hýbou alespoň jedním tvarem." />
+            name="testAllMethodsMoves"
+            message="Nejméně 4 testovací metody hýbou alespoň jedním tvarem." />
         <check
             points="0.5"
             name="testTestSmoothMethodsCount" 
-            message="Test má alespoň dvě testovací metody označené jako plynulé." />
+            message="Alespoň 2 hýbací metody mají své plyulé protějšky." />
         <check 
             points="0.75"
             name="testSmoothMoves" 

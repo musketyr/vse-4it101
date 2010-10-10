@@ -105,4 +105,12 @@ public class XORAV00_Orany3Test extends junit.framework.TestCase {
         Přesouvač p = new Přesouvač(1);
         p.přesunNa(100, 100, eli);
     }
+    
+    public void testMnohotvarPůl()
+    {
+        Mnohotvar mnohotva1 = new Mnohotvar("rur", eli, obdélník1, troj, elipsa1, trojúhel1);
+        mnohotva1.nakresli();
+        Kompresor kompreso1 = new Kompresor();
+        kompreso1.nafoukniKrát(0.5, mnohotva1);
+    }
 }
