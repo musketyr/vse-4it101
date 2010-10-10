@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<score>
+    <suite name="Defense2c">
+        <check 
+            points="0.2"
+            name="testName" 
+            message="Třída je správně pojmenována" />
+        <check 
+            points="0.2"
+            name="testStringConstructor" 
+            message="Testovací třída je vytvořena podle správné šablony" />
+        <check 
+            points="0.2"
+            name="testInitBySetUp" 
+            message="Testovací přípravek inicializuje všechny objekty" />
+        <check 
+            points="0.2"
+            name="testFixturesAreShapes" 
+            message="Přípravek je tvořen nejméně 5 grafickými objekty" />
+        <check 
+            points="0.2"
+            name="testSetUpUsesMessage" 
+            message="Vytvoření přípravku musí končit zobrazením zprávy" />                      
+        <check
+            points="0.5"
+            name="testAllMethodsMoves"
+            message="Nejméně 4 testovací metody hýbou alespoň jedním tvarem." />
+        <check
+            points="0.5"
+            name="testTestSmoothMethodsCount" 
+            message="Alespoň 2 hýbací metody mají své plyulé protějšky." />
+        <check 
+            points="0.75"
+            name="testSmoothMoves" 
+            message="Plynulé testovací metody doopravdy hýbou plynule." />
+        <check 
+            points="0.75"
+            name="testSameEnd" 
+            message="Plynulé testovací metody zanechají plátno ve stejném stavu jako metody neplynulé." />
+        <check
+            points="0.5"
+            name="testShrinkedToHalf" 
+            message="Tvary se zmenší na polovinu." />
+        <check 
+            points="0.5"
+            name="testCompressorUsed" 
+            message="Byl použit kompressor." />
+        <check 
+            points="0.5"
+            name="testAllFixturesUsed" 
+            message="Mnohotvar využívá všechny vytvořené tvary." />            
+            
+                                           
+    </suite>
+</score>
