@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 
 
 /*******************************************************************************
@@ -19,9 +22,18 @@ public class Kompresor
     /** Doba mezi jednotlivými "šťouchy".*/
     private final static int ČEKÁNÍ = 30;
 
-
+    /** Prostředník, který přihlášeným testovacím programům přeposílá
+     *  zprávy o zavolání definovaných metod. */
+    public static final Zpravodaj zpravodaj = new Zpravodaj();
 
 //== PROMĚNNÉ ATRIBUTY TŘÍDY ===================================================
+    
+    /** Příznak testovacího režimu - je-li nastaven na {@code true},
+     *  metoda {@link #zpráva(Object)} neotevírá dialogové okno
+     *  a metoda {@link #čekej(int)} nečeká. */
+    private static boolean testujeme = false;
+    
+    
 //== STATICKÝ INICIALIZAČNÍ BLOK - STATICKÝ KONSTRUKTOR ========================
 //== KONSTANTNÍ ATRIBUTY INSTANCÍ ==============================================
 //== PROMĚNNÉ ATRIBUTY INSTANCÍ ================================================
@@ -211,6 +223,9 @@ public class Kompresor
     private void foukej(INafukovací koho, int šťouchů, double dx, double dy,
                         Směr8 pevný)
     {
+        if (testujeme) {
+            zpravodaj.foukej(this, koho, šťouchů, dx, dy, pevný);
+        }
         if (pevný == null) {
             pevný = Směr8.ŽÁDNÝ;
         }
@@ -272,8 +287,147 @@ public class Kompresor
         }
     }
 
+    
 
 
 //== INTERNÍ DATOVÉ TYPY =======================================================
+    
+///#############################################################################
+///#############################################################################
+///#############################################################################
+
+
+      /*************************************************************************
+       * Instance rozhraní {@code ITester} představují testovací objekty,
+       * které chtějí být zpravovány
+       *
+       * @author    jméno autora
+       * @author    Rudolf PECINOVSKÝ
+       * @version   0.00.000, 0.0.2007
+       */
+      public interface ITester
+      {
+      //== KONSTANTY ===========================================================
+      //== DEKLAROVANÉ METODY ==================================================
+
+          /*********************************************************************
+           * Oznání zavolání metody {@link Kompresor#nafoukej(INafukovací, int, 
+           * int, Směr8)} a předá v parametru volání.
+           *
+           * @param kdo     kompresor, na kterém je metoda volána
+           * @param koho     Objekt, jehož velikost měníme.
+           * @param šťouchů  Počet kroků, v nichž velikost objektu změníme.
+           * @param dx       Zvětšení šířky objektu v jednom kroku.
+           * @param dy       Zvětšení výšky objektu v jednom kroku.
+           * @param pevný    Směr, kterým leží pevný bod.
+           */
+          public void foukej(Kompresor kdo, INafukovací koho, int šťouchů, 
+                  double dx, double dy, Směr8 pevný);
+
+
+      //== ZDĚDĚNÉ METODY ======================================================
+      //== INTERNÍ DATOVÉ TYPY =================================================
+      }
+
+
+///#############################################################################
+///#############################################################################
+///#############################################################################
+
+
+      /*************************************************************************
+       * Třída {@code Oprava} je knihovní třídou poskytující metody
+       * pro opravy nejrůznějších nesrovnalostí týkajících se práce
+       * s grafickým vstupem a výstupem.
+       */
+      public static class Zpravodaj
+      {
+      //== KONSTANTNÍ ATRIBUTY TŘÍDY ===========================================
+      //== PROMĚNNÉ ATRIBUTY TŘÍDY =============================================
+      //== STATICKÝ INICIALIZAČNÍ BLOK - STATICKÝ KONSTRUKTOR ==================
+      //== KONSTANTNÍ ATRIBUTY INSTANCÍ ========================================
+
+          /** Seznam přihlášených testovacích programů, 
+           *  kterým budou přeposílány zprávy o volání zadaných metod. */
+          private final List<ITester> seznam = new ArrayList<ITester>();
+
+
+
+      //== PROMĚNNÉ ATRIBUTY INSTANCÍ ==========================================
+      //== PŘÍSTUPOVÉ METODY VLASTNOSTÍ TŘÍDY ==================================
+      //== OSTATNÍ NESOUKROMÉ METODY TŘÍDY =====================================
+      //########################################################################
+      //== KONSTRUKTORY A TOVÁRNÍ METODY =======================================
+
+         /** Soukromy konstruktor bránící vytvoření instance. */
+          private Zpravodaj() {}
+
+
+      //== ABSTRAKTNÍ METODY ===================================================
+      //== PŘÍSTUPOVÉ METODY VLASTNOSTÍ INSTANCÍ ===============================
+      //== OSTATNÍ NESOUKROMÉ METODY INSTANCÍ ==================================
+
+          /*********************************************************************
+           * Přidá zadaný objekt mezi objekty,
+           * kterým oznamuje zavolání definovaných metod.
+           *
+           * @param tester Přidávaný testovací objekt
+           */
+          public void přihlaš(ITester tester)
+          {
+              if (seznam.contains(tester)) { return; }
+              seznam.add(tester);
+              testujeme = true;
+          }
+
+
+          /*********************************************************************
+           * Odebere zadaný objekt ze seznamu objetků,
+           * kterým oznamuje zavolání definovaných metod.
+           *
+           * @param tester Odebíraný testovací objekt
+           */
+          public void odhlaš(ITester tester)
+          {
+              seznam.remove(tester);
+              if (seznam.size() == 0) {
+                  testujeme = false;
+              }
+          }
+
+
+
+      //== SOUKROMÉ A POMOCNÉ METODY TŘÍDY =====================================
+      //== SOUKROMÉ A POMOCNÉ METODY INSTANCÍ ==================================
+
+          /*********************************************************************
+           * Oznání zavolání metody {@link Kompresor#nafoukej(INafukovací, int, 
+           * int, Směr8)a předá parametry volání.
+           *
+           * @param kdo     kompresor, na kterém je metoda volána
+           * @param koho     Objekt, jehož velikost měníme.
+           * @param šťouchů  Počet kroků, v nichž velikost objektu změníme.
+           * @param dx       Zvětšení šířky objektu v jednom kroku.
+           * @param dy       Zvětšení výšky objektu v jednom kroku.
+           * @param pevný    Směr, kterým leží pevný bod.
+           */
+          private void  foukej(Kompresor kdo, INafukovací koho, int šťouchů, 
+                  double dx, double dy, Směr8 pevný)
+          {
+              for (ITester it : seznam) {
+                  it.foukej(kdo, koho, šťouchů, dx, dy, pevný);
+              }
+          }
+
+      //== INTERNÍ DATOVÉ TYPY =================================================
+      //== TESTY A METODA MAIN =================================================
+      }
+
+
+///#############################################################################
+///#############################################################################
+///#############################################################################    
+    
+    
 //== TESTY A METODA MAIN =======================================================
 }

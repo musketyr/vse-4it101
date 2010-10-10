@@ -37,7 +37,7 @@ public class WrapperHelperTest extends TestCase {
         IToBeTestedMethod[] methods = Duck.type(new ToBeTested(), IToBeTested.class).methods();
         assertEquals(1, methods.length);
         IToBeTestedMethod method = methods[0];
-        Method theMethod = WrapperHelper.tryGetMethod(method);
+        Method theMethod = WrapperHelper.getMethod(method);
         assertEquals(THE_METHOD, theMethod.getName());
     }
     

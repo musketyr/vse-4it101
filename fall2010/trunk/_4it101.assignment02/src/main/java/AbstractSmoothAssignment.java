@@ -8,26 +8,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
-import org.duckapter.Duck;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import eu.ebdit.eau.Porter;
-
-public abstract class AbstractSmoothAssignment extends TestCase  implements IO.ITester{
+public abstract class AbstractSmoothAssignment extends DuckapterTest implements IO.ITester{
 
     public static final Pattern XNAME_VSE_PTRN = Pattern
                 .compile("(X[A-Z_]{4}\\d\\d\\d?)_[A-Z][a-z]*_?\\d?(Test)?");
 
     protected abstract void hideCanvas();
 
-    private Class<?> testClass;
-    private Object test;
     private int waitAndMoveCount = 0;
     private int wait30 = 0;
     private int wait50 = 0;
@@ -47,11 +40,11 @@ public abstract class AbstractSmoothAssignment extends TestCase  implements IO.I
     }
 
     public void testName() throws Exception {
-        assertTrue(XNAME_VSE_PTRN.matcher(this.testClass.getName()).matches());
+        assertTrue(XNAME_VSE_PTRN.matcher(getTestClass().getName()).matches());
     }
 
     public void testStringConstructor() throws Exception {
-        assertTrue(test(testClass, HasStringContructor.class));
+        assertTrue(test(getTestClass(), HasStringContructor.class));
     }
 
     public void testInitBySetUp() throws Exception {
@@ -117,7 +110,7 @@ public abstract class AbstractSmoothAssignment extends TestCase  implements IO.I
     public void testSmoothMoves() throws Exception {
         Map<String, TestMethod> methods = Maps.newHashMap();
         for (TestMethod method : as(HasTests.class).allTests()) {
-            methods.put(WrapperHelper.tryGetMethod(method).getName(), method);
+            methods.put(WrapperHelper.getMethod(method).getName(), method);
         }
         Set<String> used = Sets.newHashSet();
         Pattern pattern = Pattern.compile(HasSmoothTests.SMOOTH_METHOD_REGEXP);
@@ -147,7 +140,7 @@ public abstract class AbstractSmoothAssignment extends TestCase  implements IO.I
     public void testSameEnd() throws Exception {
         Map<String, TestMethod> methods = Maps.newHashMap();
         for (TestMethod method : as(HasTests.class).allTests()) {
-            methods.put(WrapperHelper.tryGetMethod(method).getName(), method);
+            methods.put(WrapperHelper.getMethod(method).getName(), method);
         }
         Set<String> used = Sets.newHashSet();
         Pattern pattern = Pattern.compile(HasSmoothTests.SMOOTH_METHOD_REGEXP);
@@ -238,21 +231,13 @@ public abstract class AbstractSmoothAssignment extends TestCase  implements IO.I
 
     @Override
     protected void setUp() throws Exception {
-        String testClassName = (String) Porter.leasePorter("bluej")
-                .inspectBurden("testedClass");
-        if (testClassName == null) {
-            testClassName = "XORAV00_Orany3Test";
-        }
-        testClass = Class.forName(testClassName);
-        test = Duck.type(testClass, HasStringContructor.class).newInstance(
-                "Test");
+        super.setUp();
         IO.zpravodaj.přihlaš(this);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        testClass = null;
-        test = null;
+        super.tearDown();
         initialShapes = emptyFixtures();
         messageCount = 0;
         waitAndMoveCount = 0;
@@ -260,14 +245,6 @@ public abstract class AbstractSmoothAssignment extends TestCase  implements IO.I
         wait50 = 0;
         IO.zpravodaj.odhlaš(this);
         hideCanvas();
-    }
-
-    private <T> T as(Class<T> duckInterface) {
-        return Duck.type(test, duckInterface);
-    }
-
-    private void is(Class<?> duckIterface) {
-        assertTrue(Duck.test(test, duckIterface));
     }
 
     public void čekej(int ms) {
